@@ -24,10 +24,26 @@ services:
     ports:
       - "5432:5432"
     volumes:
-      - pgdata:/var/lib/postgresql/data
-volumes:
-  pgdata:
+      - pgdata-catalog:/var/lib/postgresql/data
 
   # MS-ORDERS Database
+  ms-orders-db:
+    image: postgres:15-alpine
+    container_name: ms-orders-db
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    environment:
+      POSTGRES_USER: ${ORDERS_MS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${ORDERS_MS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${ORDERS_MS_POSTGRES_DB}
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata-orders:/var/lib/postgresql/data
 
   # MS-AUTH Database
+
+volumes:
+  pgdata-catalog:
+  pgdata-orders:
