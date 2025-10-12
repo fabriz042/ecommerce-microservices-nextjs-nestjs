@@ -1,19 +1,22 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { Transport } from '@nestjs/microservices';
+import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/rpc-exception.filter';
+import { envs } from 'src/config/envs';
 
 async function bootstrap() {
   const logger = new Logger('ProductsService');
 
-  const app = await NestFactory.createMicroservice(AppModule, {
-    transport: Transport.TCP,
-    options: {
-      host: 'localhost',
-      port: process.env.PORT,
+  const app = await NestFactory.createMicroservice<MicroserviceOptions>(
+    AppModule,
+    {
+      transport: Transport.TCP,
+      options: {
+        port: envs.port,
+      },
     },
-  });
+  );
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
@@ -24,6 +27,6 @@ async function bootstrap() {
 
   await app.listen();
 
-  logger.log(`**********MS-Catalog is listening ${process.env.PORT}**********`);
+  logger.log(`**********MS-Catalog is listening ${envs.port}**********`);
 }
 bootstrap();
