@@ -12,8 +12,6 @@ import {
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ClientProxy } from '@nestjs/microservices';
-import { HttpErrorFactory } from 'src/common/http-errors';
-import { catchError } from 'rxjs/internal/operators/catchError';
 
 @Controller('category')
 export class CategoryController {
@@ -49,8 +47,6 @@ export class CategoryController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.categoryClient
-      .send('removeCategory', { id })
-      .pipe(catchError((error) => HttpErrorFactory(error)));
+    return this.categoryClient.send('removeCategory', { id });
   }
 }

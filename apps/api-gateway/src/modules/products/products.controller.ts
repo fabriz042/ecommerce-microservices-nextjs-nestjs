@@ -12,13 +12,12 @@ import {
 import { ClientProxy } from '@nestjs/microservices/';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
-import { catchError } from 'rxjs/operators';
-import { HttpErrorFactory } from 'src/common/http-errors';
+import { CATALOG_SERVICE } from 'src/config/services';
 
 @Controller('products')
 export class ProductsController {
   constructor(
-    @Inject('PRODUCTS_SERVICE') private readonly productsClient: ClientProxy,
+    @Inject(CATALOG_SERVICE) private readonly productsClient: ClientProxy,
   ) {}
 
   @Post()
@@ -33,9 +32,7 @@ export class ProductsController {
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.productsClient
-      .send('findOneProduct', { id })
-      .pipe(catchError((error) => HttpErrorFactory(error)));
+    return this.productsClient.send('findOneProduct', { id });
   }
 
   @Patch(':id')
@@ -43,18 +40,14 @@ export class ProductsController {
     @Param('id', ParseUUIDPipe) id: string,
     @Body() updateProductDto: UpdateProductDto,
   ) {
-    return this.productsClient
-      .send('updateProduct', {
-        id,
-        ...updateProductDto,
-      })
-      .pipe(catchError((error) => HttpErrorFactory(error)));
+    return this.productsClient.send('updateProduct', {
+      id,
+      ...updateProductDto,
+    });
   }
 
   @Delete(':id')
   remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.productsClient
-      .send('removeProduct', { id })
-      .pipe(catchError((error) => HttpErrorFactory(error)));
+    return this.productsClient.send('removeProduct', { id });
   }
 }

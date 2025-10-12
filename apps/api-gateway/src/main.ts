@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { envs } from './config/envs';
+import { HttpExceptionFilter } from './common/http-errors';
 
 async function bootstrap() {
   const logger = new Logger('Api-Gateway');
@@ -17,6 +18,7 @@ async function bootstrap() {
     }),
   );
 
+  app.useGlobalFilters(new HttpExceptionFilter());
   await app.listen(envs.port);
 
   logger.log(`--API Gateway is listening on port ${envs.port}--`);
