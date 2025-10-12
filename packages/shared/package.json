@@ -1,0 +1,15 @@
+{
+  "name": "@packages/shared",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "dependencies": {
+    "@nestjs/microservices": "^11.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.1"
+  }
+}

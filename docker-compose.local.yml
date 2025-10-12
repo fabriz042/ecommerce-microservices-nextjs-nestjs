@@ -1,0 +1,33 @@
+services:
+  #NATS Server
+  nats-server:
+    image: nats:latest
+    container_name: nats-server
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    ports:
+      - "4222:4222" # Client connections
+      - "8222:8222" # HTTP monitoring
+
+  # MS-CATALOG Database
+  ms-catalog-db:
+    image: postgres:15-alpine
+    container_name: ms-catalog-db
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    environment:
+      POSTGRES_USER: ${CATALOG_MS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${CATALOG_MS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${CATALOG_MS_POSTGRES_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+volumes:
+  pgdata:
+
+  # MS-ORDERS Database
+
+  # MS-AUTH Database

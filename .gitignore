@@ -1,0 +1,61 @@
+# Node.js
+node_modules
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Turbo
+.turbo
+
+# Build output
+dist
+build
+generated
+
+# Dependency directories
+**/node_modules
+
+# Environment variables
+.env
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Prisma
+**/prisma/migrations
+**/prisma/dev.db
+**/prisma/dev.db-journal
+
+# Next.js
+.next
+out
+
+# Miscellaneous
+.DS_Store
+Thumbs.db
+*.iml
+*.lock-wscript
+*.tsbuildinfo
+*.eslintcache
+*.rpt2_cache
+*.rts2_cache_cjs
+*.rts2_cache_es
+*.rts2_cache_umd
+
+# Coverage
+coverage
+
+# Test files
+**/test-results
+**/test-output
