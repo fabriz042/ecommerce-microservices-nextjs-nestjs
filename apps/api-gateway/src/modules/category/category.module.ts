@@ -13,8 +13,8 @@ import { CATALOG_SERVICE } from 'src/config/services';
         name: CATALOG_SERVICE,
         transport: Transport.TCP,
         options: {
-          host: envs.productsMicroserviceHost,
-          port: envs.productsMicroservicePort,
+          host: envs.catalogMicroserviceHost,
+          port: envs.catalogMicroservicePort,
         },
       },
     ]),

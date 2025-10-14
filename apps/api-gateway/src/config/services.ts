@@ -1,1 +1,2 @@
 export const CATALOG_SERVICE = 'CATALOG_SERVICE';
+export const ORDERS_SERVICE = 'ORDERS_SERVICE';

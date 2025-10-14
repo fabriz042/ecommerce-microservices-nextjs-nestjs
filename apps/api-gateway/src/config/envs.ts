@@ -2,6 +2,9 @@ import 'dotenv/config';
 
 export const envs = {
   port: Number(process.env.PORT),
-  productsMicroservicePort: Number(process.env.PRODUCTS_MICROSERVICE_PORT),
-  productsMicroserviceHost: process.env.PRODUCTS_MICROSERVICE_HOST,
+  catalogMicroservicePort: Number(process.env.CATALOG_MICROSERVICE_PORT),
+  catalogMicroserviceHost: process.env.CATALOG_MICROSERVICE_HOST,
+
+  ordersMicroservicePort: Number(process.env.ORDERS_MICROSERVICE_PORT),
+  ordersMicroserviceHost: process.env.ORDERS_MICROSERVICE_HOST,
 };
