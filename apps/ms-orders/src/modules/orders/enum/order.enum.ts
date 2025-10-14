@@ -1,0 +1,7 @@
+import { ORDER_STATUS } from 'generated/prisma';
+
+export const ORDER_STATUS_LIST = [
+  ORDER_STATUS.PENDING,
+  ORDER_STATUS.DELIVERED,
+  ORDER_STATUS.CANCELLED,
+];
