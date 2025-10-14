@@ -1,8 +1,9 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaClient } from '../../../generated/prisma';
 import { RpcNotFound } from '@packages/shared';
+import { RpcException } from '@nestjs/microservices';
 
 @Injectable()
 export class ProductsService extends PrismaClient implements OnModuleInit {
@@ -61,5 +62,23 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   async remove(id: string) {
     await this.findOne(id);
     return this.product.delete({ where: { id } });
+  }
+
+  //Validate products
+  async validateProduct(ids: string[]) {
+    this.logger.log(`Received: ${JSON.stringify(ids)}`);
+    ids = Array.from(new Set(ids));
+    const products = await this.product.findMany({
+      where: {
+        id: { in: ids },
+      },
+    });
+
+     this.logger.log(`Found products: ${JSON.stringify(products)}`); 
+
+    if (products.length !== ids.length)
+      throw new RpcException({ message: 'Some products not found', status: HttpStatus.BAD_REQUEST });
+
+    return products;
   }
 }
