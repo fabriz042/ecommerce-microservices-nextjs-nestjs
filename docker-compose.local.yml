@@ -43,7 +43,22 @@ services:
       - pgdata-orders:/var/lib/postgresql/data
 
   # MS-AUTH Database
+  ms-auth-db:
+    image: postgres:15-alpine
+    container_name: ms-auth-db
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    environment:
+      POSTGRES_USER: ${AUTH_MS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AUTH_MS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${AUTH_MS_POSTGRES_DB}
+    ports:
+      - "5434:5432"
+    volumes:
+      - pgdata-auth:/var/lib/postgresql/data
 
 volumes:
   pgdata-catalog:
   pgdata-orders:
+  pgdata-auth:
