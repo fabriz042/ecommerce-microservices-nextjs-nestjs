@@ -35,13 +35,33 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
   async findOne(id: string) {
     const order = await this.order.findFirst({
       where: { id },
+      include: {
+        OrderItem: {
+          select: { price: true, productId: true, quantity: true },
+        },
+      },
     });
+
+    // Get product details from Catalog service and validate them
+    const productsIds = order?.OrderItem.map(
+      (orderItem) => orderItem.productId,
+    );
+    const products = await firstValueFrom(
+      this.CatalogClient.send('validateProduct', productsIds),
+    );
     if (!order)
       throw new RpcException({
         status: HttpStatus.NOT_FOUND,
         message: `Order ${id} not found`,
       });
-    return order;
+    return {
+      ...order,
+      OrderItem: order.OrderItem.map((OrderItem) => ({
+        ...OrderItem,
+        name: products.find((products) => products.id === OrderItem.productId)
+          .name,
+      })),
+    };
   }
 
   //Create
@@ -60,7 +80,43 @@ export class OrdersService extends PrismaClient implements OnModuleInit {
         return price * orderItem.quantity;
       }, 0);
 
-      return { totalAmount };
+      // Calculate total items
+      const totalItems = createOrderDto.items.reduce((acc, orderItem) => {
+        return acc + orderItem.quantity;
+      }, 0);
+
+      // Create order in DB
+      const order = await this.order.create({
+        data: {
+          totalAmount: totalAmount,
+          totalItems: totalItems,
+          OrderItem: {
+            createMany: {
+              data: createOrderDto.items.map((orderItem) => ({
+                price: products.find(
+                  (products) => products.id === orderItem.productId,
+                ).price,
+                productId: orderItem.productId,
+                quantity: orderItem.quantity,
+              })),
+            },
+          },
+        },
+        include: {
+          OrderItem: {
+            select: { price: true, productId: true, quantity: true },
+          },
+        },
+      });
+
+      return {
+        ...order,
+        OrderItem: order.OrderItem.map((OrderItem) => ({
+          ...OrderItem,
+          name: products.find((products) => products.id === OrderItem.productId)
+            .name,
+        })),
+      };
     } catch (error) {
       this.logger.error('Error creating order', error);
       throw new RpcException({
