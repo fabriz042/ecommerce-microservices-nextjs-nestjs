@@ -8,16 +8,19 @@ import {
   ParseUUIDPipe,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices/';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { NATS_SERVICE } from 'src/config/services';
+import { AuthGuard } from '../auth/guards/auth.guard';
 
 @Controller('products')
 export class ProductsController {
   constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   createProduct(@Body() createProductDto: CreateProductDto) {
     return this.client.send('createProduct', createProductDto);
