@@ -4,4 +4,6 @@ export const envs = {
   port: Number(process.env.PORT),
   catalogMicroservicePort: Number(process.env.CATALOG_MICROSERVICE_PORT),
   catalogMicroserviceHost: process.env.CATALOG_MICROSERVICE_HOST,
+
+  natsServers: process.env.NATS_SERVERS?.split(','),
 };

@@ -6,14 +6,14 @@ import { AllExceptionsFilter } from './common/rpc-exception.filter';
 import { envs } from 'src/config/envs';
 
 async function bootstrap() {
-  const logger = new Logger('ProductsService');
+  const logger = new Logger('CatalogService');
 
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     AppModule,
     {
-      transport: Transport.TCP,
+      transport: Transport.NATS,
       options: {
-        port: envs.port,
+        servers: envs.natsServers,
       },
     },
   );

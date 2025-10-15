@@ -12,26 +12,25 @@ import {
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { ClientProxy } from '@nestjs/microservices';
+import { NATS_SERVICE } from 'src/config/services';
 
 @Controller('category')
 export class CategoryController {
-  constructor(
-    @Inject('CATALOG_SERVICE') private readonly categoryClient: ClientProxy,
-  ) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
 
   @Post()
   create(@Body() createCategoryDto: CreateCategoryDto) {
-    return this.categoryClient.send('createCategory', createCategoryDto);
+    return this.client.send('createCategory', createCategoryDto);
   }
 
   @Get()
   findAll() {
-    return this.categoryClient.send('findAllCategory', {});
+    return this.client.send('findAllCategory', {});
   }
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.categoryClient.send('findOneCategory', { id });
+    return this.client.send('findOneCategory', { id });
   }
 
   @Patch(':id')
@@ -39,7 +38,7 @@ export class CategoryController {
     @Param('id') id: string,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoryClient.send('updateCategory', {
+    return this.client.send('updateCategory', {
       id,
       ...updateCategoryDto,
     });
@@ -47,6 +46,6 @@ export class CategoryController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.categoryClient.send('removeCategory', { id });
+    return this.client.send('removeCategory', { id });
   }
 }

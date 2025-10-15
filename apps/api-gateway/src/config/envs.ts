@@ -7,4 +7,6 @@ export const envs = {
 
   ordersMicroservicePort: Number(process.env.ORDERS_MICROSERVICE_PORT),
   ordersMicroserviceHost: process.env.ORDERS_MICROSERVICE_HOST,
+
+  natsServers: process.env.NATS_SERVERS?.split(','),
 };
