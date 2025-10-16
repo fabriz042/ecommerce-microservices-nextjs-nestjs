@@ -1,27 +1,165 @@
-// schema.prisma
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
-
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
+// Main Product model
 model Product {
   id          String   @id @default(uuid())
   name        String
+  slug        String   @unique
+  price       Decimal  @db.Decimal(8, 2)
+  stock       Int
   description String?
-  price       Float
+  weight      Int?    // in grams
+  includes    String?
+  isActive    Boolean  @default(true)
+
+  //Simple relations
+  statusId    String
+  status      Status    @relation(fields: [statusId], references: [id])
+
+  brandId     String
+  brand       Brand     @relation(fields: [brandId], references: [id])
 
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id])
+
+  seriesId    String?
+  series      Series?    @relation(fields: [seriesId], references: [id])
+
+  characterId String?
+  character   Character? @relation(fields: [characterId], references: [id])
+
+  //Many-to-Many relations
+  image       Image[]
+  sport       Sport[]
+  tag         Tag[]
+
+  // Sub model with different attributes relation
+  bag        Bag?
+  glove      Glove?
+  airgear    Airgear?
+  oil        Oil?
+  trophy    Trophy?
+
+  // Indexes
+  //  @@index([seriesId])
 }
 
+// Simple relations models
+model Status {
+  id   String @id @default(uuid())
+  name String @unique
+
+  products Product[]
+}
+model Brand {
+  id   String @id @default(uuid())
+  name String @unique
+
+  products Product[]
+}
 model Category {
   id   String @id @default(uuid())
-  name String
+  name String @unique
   
   products Product[]
+}
+model Series {
+  id   String @id @default(uuid())
+  name String @unique
+
+  products Product[]
+}
+model Character {
+  id   String @id @default(uuid())
+  name String @unique
+
+  products Product[]
+}
+
+// Many-to-Many relations models
+model Image {
+  id        String   @id @default(uuid())
+  imageUrl  String
+  alt       String
+  order     Int
+  products  Product[]
+}
+model Sport {
+  id    String   @id @default(uuid())
+  name  String
+  products Product[]
+}
+model Tag {
+  id    String   @id @default(uuid())
+  name  String
+  products Product[]
+}
+
+//Sub models with special attributes
+model Bag {
+  id        String   @id @default(uuid())
+  length    Int
+  width     Int
+  height    Int
+  depth     Int
+  pockets   Int
+  main_comp Int
+  top_open  Int
+
+  productId String @unique
+  product   Product @relation(fields: [productId], references: [id])
+}
+model Glove{
+  id        String @id @default(uuid())
+  length    Int
+  width     Int
+  open_size Int
+
+  productId String @unique
+  product   Product @relation(fields: [productId], references: [id])
+}
+model Airgear{
+  id        String @id @default(uuid())
+  length    Int
+  width     Int
+  height    Int
+  depth     Int
+  number_holes Int
+
+  productId String @unique
+  product   Product @relation(fields: [productId], references: [id])
+}
+
+model Oil{
+  id        String @id @default(uuid())
+  volume    Int
+  attributeId String
+  attribute   Attribute @relation(fields: [attributeId], references: [id])
+
+  productId String @unique
+  product   Product @relation(fields: [productId], references: [id])
+}
+model Attribute {
+  id   String @id @default(uuid())
+  name String @unique
+
+  oils Oil[]
+}
+
+model Trophy{
+  id                String @id @default(uuid())
+  length            Int
+  release_date      DateTime
+  expiration_date   DateTime
+  scale             String
+
+  productId String @unique
+  product   Product @relation(fields: [productId], references: [id])
 }
