@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { StatusService } from './status.service';
 import { CreateStatusDto } from './dto/create-status.dto';
 import { UpdateStatusDto } from './dto/update-status.dto';
@@ -19,7 +19,7 @@ export class StatusController {
   }
 
   @MessagePattern('findOneStatus')
-  findOne(@Payload() id: number) {
+  findOne(@Payload('id', ParseUUIDPipe) id: string) {
     return this.statusService.findOne(id);
   }
 
@@ -29,7 +29,7 @@ export class StatusController {
   }
 
   @MessagePattern('removeStatus')
-  remove(@Payload() id: number) {
+  remove(@Payload('id', ParseUUIDPipe) id: string) {
     return this.statusService.remove(id);
   }
 }
