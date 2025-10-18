@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
 import { BrandService } from './brand.service';
 import { CreateBrandDto } from './dto/create-brand.dto';
@@ -19,7 +19,7 @@ export class BrandController {
   }
 
   @MessagePattern('findOneBrand')
-  findOne(@Payload() id: number) {
+  findOne(@Payload('id', ParseUUIDPipe) id: string) {
     return this.brandService.findOne(id);
   }
 
@@ -29,7 +29,7 @@ export class BrandController {
   }
 
   @MessagePattern('removeBrand')
-  remove(@Payload() id: number) {
+  remove(@Payload('id', ParseUUIDPipe) id: string) {
     return this.brandService.remove(id);
   }
 }
