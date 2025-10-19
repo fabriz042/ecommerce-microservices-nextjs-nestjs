@@ -1,37 +1,88 @@
-import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { PrismaClient } from '../../../generated/prisma';
+import { Injectable } from '@nestjs/common';
 import { RpcNotFound } from '@packages/shared';
 import { RpcException } from '@nestjs/microservices';
+import { DatabaseService } from '../../common/database.service';
+import { CreateProductDto } from './dto/create-product.dto';
+import { UpdateProductDto } from './dto/update-product.dto';
+import { FilterDto } from 'src/common/dtos/filter.dtos';
 
 @Injectable()
-export class ProductsService extends PrismaClient implements OnModuleInit {
-  private readonly logger = new Logger('ProductsService');
-
-  async onModuleInit() {
-    await this.$connect();
-    this.logger.log('____________Products connected to the database');
-  }
+export class ProductsService {
+  constructor(private readonly db: DatabaseService) {}
 
   //Get all
-  findAll() {
-    return this.product.findMany({
+  async findAll(filterDto: FilterDto) {
+    //Pagination params
+    const page = filterDto.page ?? 1;
+    const limit = Math.min(filterDto.limit ?? 10, 100);
+
+    //Filters
+    const { search, category, status } = filterDto;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { category: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
+    if (category) {
+      where.category = { name: category };
+    }
+
+    if (status) {
+      where.status = { name: status };
+    }
+
+    //Query
+    const totalResults = await this.db.product.count({ where });
+    const products = await this.db.product.findMany({
+      where,
+      skip: (page - 1) * limit,
+      take: limit,
       select: {
         name: true,
+        slug: true,
         price: true,
-        category: {
+        status: {
           select: {
             name: true,
           },
         },
+        image: {
+          select: {
+            imageUrl: true,
+            alt: true,
+            order: true,
+          },
+        },
       },
     });
+
+    // Meta info
+    const totalPages = Math.ceil(totalResults / limit);
+    const hasNext = totalResults > page * limit;
+    const hasPrevious = page > 1;
+
+    //Response
+    return {
+      meta: {
+        total: totalResults,
+        page: page,
+        perPage: limit,
+        totalPages: totalPages,
+        hasNext: hasNext,
+        hasPrevious: hasPrevious,
+      },
+      data: products,
+    };
   }
 
   //Get one
   async findOne(id: string) {
-    const product = await this.product.findFirst({
+    const product = await this.db.product.findUnique({
       where: { id },
     });
 
@@ -39,20 +90,102 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
     return product;
   }
 
-  //Create
   async create(createProductDto: CreateProductDto) {
-    return this.product.create({
-      data: createProductDto,
+    // Generate slug if not provided
+    const slugify = require('slugify');
+    const slug =
+      createProductDto.slug ||
+      slugify(createProductDto.name, { lower: true, strict: true });
+
+    // Check if slug is unique
+    const existingProduct = await this.db.product.findUnique({
+      where: { slug },
     });
+
+    if (existingProduct) {
+      throw new RpcException({
+        status: 400,
+        message: `Product with slug ${slug} already exists.`,
+      });
+    }
+
+    // Destructure the DTO to separate relations from main product data
+    const {
+      bag,
+      glove,
+      airgear,
+      oil,
+      trophy,
+      imageIds,
+      sportIds,
+      tagIds,
+      ...productData
+    } = createProductDto;
+
+    // Save the product to the database
+    try {
+      const created = await this.db.product.create({
+        data: {
+          ...productData,
+          slug,
+          ...(bag && { bag: { create: bag } }),
+          ...(glove && { glove: { create: glove } }),
+          ...(airgear && { airgear: { create: airgear } }),
+          ...(oil && { oil: { create: oil } }),
+          ...(trophy && { trophy: { create: trophy } }),
+          ...(imageIds &&
+            imageIds.length > 0 && {
+              image: {
+                connect: imageIds.map((id: string) => ({ id })),
+              },
+            }),
+          ...(sportIds &&
+            sportIds.length > 0 && {
+              sport: {
+                connect: sportIds.map((id: string) => ({ id })),
+              },
+            }),
+          ...(tagIds &&
+            tagIds.length > 0 && {
+              tag: {
+                connect: tagIds.map((id: string) => ({ id })),
+              },
+            }),
+        },
+      });
+      return created;
+    } catch (error) {
+      // Handle foreign key constraint errors
+      if (error.code === 'P2003') {
+        const field = error.meta?.constraint?.split('_')[1] || 'foreign key';
+        throw new RpcException({
+          status: 400,
+          message: `Invalid ${field}. Entity not found.`,
+        });
+      }
+      throw error;
+    }
   }
 
   //Update
   async update(id: string, updateProductDto: UpdateProductDto) {
     await this.findOne(id);
 
-    const updatedProduct = await this.product.update({
+    const {
+      bag,
+      glove,
+      airgear,
+      oil,
+      trophy,
+      imageIds,
+      sportIds,
+      tagIds,
+      ...productData
+    } = updateProductDto;
+
+    const updatedProduct = await this.db.product.update({
       where: { id },
-      data: updateProductDto,
+      data: { ...productData },
     });
 
     return updatedProduct;
@@ -61,23 +194,27 @@ export class ProductsService extends PrismaClient implements OnModuleInit {
   //Delete
   async remove(id: string) {
     await this.findOne(id);
-    return this.product.delete({ where: { id } });
+    return this.db.product.delete({ where: { id } });
   }
+
+  //---------------------------------------------
+  // Additional methods to other ms
+  //---------------------------------------------
 
   //Validate products
   async validateProduct(ids: string[]) {
-    this.logger.log(`Received: ${JSON.stringify(ids)}`);
     ids = Array.from(new Set(ids));
-    const products = await this.product.findMany({
+    const products = await this.db.product.findMany({
       where: {
         id: { in: ids },
       },
     });
 
-     this.logger.log(`Found products: ${JSON.stringify(products)}`); 
-
     if (products.length !== ids.length)
-      throw new RpcException({ message: 'Some products not found', status: HttpStatus.BAD_REQUEST });
+      throw new RpcException({
+        status: 404,
+        message: 'Some products not found',
+      });
 
     return products;
   }
