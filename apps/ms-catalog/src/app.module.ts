@@ -4,6 +4,8 @@ import { CategoryModule } from './modules/category/category.module';
 import { ConfigModule } from '@nestjs/config';
 import { BrandModule } from './modules/brand/brand.module';
 import { StatusModule } from './modules/status/status.module';
+import { SeriesModule } from './modules/series/series.module';
+import { CharacterModule } from './modules/character/character.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -14,6 +16,8 @@ import { StatusModule } from './modules/status/status.module';
     ProductsModule,
     BrandModule,
     StatusModule,
+    SeriesModule,
+    CharacterModule,
   ],
   controllers: [],
   providers: [],

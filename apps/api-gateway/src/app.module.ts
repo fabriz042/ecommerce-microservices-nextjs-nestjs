@@ -8,8 +8,9 @@ import {
   BrandModule,
   StatusModule,
   AuthModule,
+  SeriesModule,
+  CharacterModule,
 } from './modules';
-
 @Module({
   imports: [
     ProductsModule,
@@ -23,6 +24,8 @@ import {
     AuthModule,
     BrandModule,
     StatusModule,
+    CharacterModule,
+    SeriesModule,
   ],
 })
 export class AppModule {}

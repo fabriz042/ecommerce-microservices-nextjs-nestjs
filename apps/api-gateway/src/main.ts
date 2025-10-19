@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { envs } from './config/envs';
-import { HttpExceptionFilter } from './common/http-errors';
+import { HttpExceptionFilter } from './common/error-handler/http-errors';
 
 async function bootstrap() {
   const logger = new Logger('Api-Gateway');
