@@ -2,13 +2,9 @@
 
 This project is a fullstack ecommerce application built using Next.js for the frontend and NestJS for the backend. It is designed with a microservices architecture to ensure scalability and maintainability.
 
-## Prerequisites
+Rebuilt an older private ecommerce project, sanitizing the code for public release.
 
-Before setting up the project, ensure you have the following installed:
-
-- Node.js (v20 or higher)
-- Docker and Docker Compose
-- pnpm (Package Manager)
+![Architecture Diagram](./docs/arch.gif)
 
 ## Setup Instructions
 
@@ -36,7 +32,7 @@ Create a `.env` file in the root directory and add the required environment vari
 #### Using Docker Compose
 
 ```bash
-# Start all services using Docker Compose
+# Start all databases and Message broker
 docker-compose -f docker-compose.local.yml up -d
 ```
 
