@@ -1,0 +1,21 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Message {
+  id          String   @id @default(uuid())
+  role        String   // 'user', 'assistant', 'tool'
+  content     String
+
+  toolCallId  String?
+  toolName    String? 
+  toolArgs    Json?
+
+  createdAt   DateTime @default(now())
+}
