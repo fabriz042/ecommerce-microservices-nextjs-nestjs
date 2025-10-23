@@ -11,11 +11,11 @@ datasource db {
 model Message {
   id          String   @id @default(uuid())
   role        String   // 'user', 'assistant', 'tool'
-  content     String
+  content     Json?
 
   toolCallId  String?
   toolName    String? 
-  toolArgs    Json?
+  toolArgs    String?
 
   createdAt   DateTime @default(now())
 }
