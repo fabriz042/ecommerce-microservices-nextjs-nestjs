@@ -9,6 +9,12 @@ async function bootstrap() {
 
   const app = await NestFactory.create(AppModule);
 
+  // Enable CORS for NextJS frontend dev
+  app.enableCors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api');
 
   app.useGlobalPipes(
