@@ -17,6 +17,7 @@ import {
 
 import Container from "@/components/Container";
 import BurbuWhatsapp from "@/components/ui/WhtsppButton";
+import Chat from "@/components/Chat";
 
 export default function Home() {
   return (
@@ -66,6 +67,7 @@ export default function Home() {
         />
       </Carousel>
       {/*Accordeon*/}
+      <Chat />
       <Container>
         <div className="h-[200px]">
           <Accordion type="single" collapsible>
