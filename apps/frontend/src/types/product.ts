@@ -12,10 +12,10 @@ export interface Product {
   images: ImageData[];
 }
 
-export interface PaginatedProducts {
-  count: number;
+export interface Meta {
+  total: number;
   num_pages: number;
-  results: Product[];
+  data: Product[];
 }
 
 //Interfaces for detailed product information

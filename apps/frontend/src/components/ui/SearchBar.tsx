@@ -9,7 +9,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 
 import { getSearchResults } from "@/services/product/product.service";
 
-import { PaginatedProducts } from "@/domain/entities/product";
+import { Meta } from "@/types/product";
 
 const moneda = "s/. ";
 const searchSuggestions = [
@@ -32,10 +32,10 @@ const SearchBar = () => {
   // Logic to manage the search input and results
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [productsData, setProductsData] = useState<PaginatedProducts>({
-    count: 0,
+  const [productsData, setProductsData] = useState<Meta>({
+    total: 0,
     num_pages: 0,
-    results: [],
+    data: [],
   });
   useEffect(() => {
     const handleOutSideClick = (event: MouseEvent) => {
@@ -68,7 +68,7 @@ const SearchBar = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setProductsData({ count: 0, num_pages: 0, results: [] });
+        setProductsData({ total: 0, num_pages: 0, data: [] });
         setSearchStatus("Searching...");
         const data = await getSearchResults({
           search: debouncedSearch,
@@ -77,9 +77,9 @@ const SearchBar = () => {
 
         setProductsData(data);
         setSearchStatus(
-          data.count === 0
+          data.meta.total === 0
             ? "No se encontraron productos"
-            : `Ver los ${data.count} productos encontrados ->`
+            : `Ver los ${data.meta.total} productos encontrados ->`
         );
       } catch (error) {
         console.error("Error fetching the product list", error);
@@ -174,7 +174,7 @@ const SearchBar = () => {
         className="bg-white/70 absolute w-full mt-[50px] p-3 z-20 rounded-b-[30px]"
         style={{ display: isOpen ? "block" : "none" }}
       >
-        {productsData.results.map(({ name, price, slug, images }) => (
+        {productsData.data.map(({ name, price, slug, images }) => (
           <Link href={`/productos/categoria/${slug}`} key={slug}>
             <div
               className="flex space-x-1 rounded-lg p-3 m-1 border-2 border-black-500 cursor-pointer bg-slate-200 hover:bg-slate-300 shadow-sm"
