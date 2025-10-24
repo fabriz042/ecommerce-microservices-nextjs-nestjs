@@ -6,3 +6,4 @@ export * from './status/status.module';
 export * from './auth/auth.module';
 export * from './series/series.module';
 export * from './character/character.module';
+export * from './chatbot/chatbot.module';
