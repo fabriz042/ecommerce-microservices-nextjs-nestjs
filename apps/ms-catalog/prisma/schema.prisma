@@ -86,8 +86,8 @@ model Character {
 // Many-to-Many relations models
 model Image {
   id        String   @id @default(uuid())
-  imageUrl  String
-  alt       String
+  image_url  String
+  alt_text   String
   order     Int
   products  Product[]
 }
