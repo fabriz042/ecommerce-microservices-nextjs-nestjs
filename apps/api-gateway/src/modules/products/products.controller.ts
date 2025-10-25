@@ -33,9 +33,9 @@ export class ProductsController {
     return this.client.send('findAllProducts', filterDto);
   }
 
-  @Get(':id')
-  findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.client.send('findOneProduct', { id });
+  @Get(':slug')
+  findOne(@Param('slug') slug: string) {
+    return this.client.send('findOneProduct', { slug });
   }
 
   @Patch(':id')

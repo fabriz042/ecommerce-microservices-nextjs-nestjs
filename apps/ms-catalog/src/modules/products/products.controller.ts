@@ -24,8 +24,8 @@ export class ProductsController {
 
   //Get one
   @MessagePattern('findOneProduct')
-  findOne(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.productsService.findOne(id);
+  findOne(@Payload('slug') slug: string) {
+    return this.productsService.findOne(slug);
   }
 
   //Update
