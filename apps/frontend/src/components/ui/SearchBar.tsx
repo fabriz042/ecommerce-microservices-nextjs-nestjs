@@ -77,9 +77,9 @@ const SearchBar = () => {
 
         setProductsData(data);
         setSearchStatus(
-          data.meta.total === 0
+          data.meta.total_items === 0
             ? "No se encontraron productos"
-            : `Ver los ${data.meta.total} productos encontrados ->`
+            : `Ver los ${data.meta.total_items} productos encontrados ->`
         );
       } catch (error) {
         console.error("Error fetching the product list", error);
