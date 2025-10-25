@@ -5,9 +5,9 @@ import { IoIosArrowDown, IoIosArrowUp } from "react-icons/io";
 
 type DropdownProps = {
   label: string;
-  items: { name: string }[];
+  items: { id: string; name: string }[];
   selected: string;
-  onSelect: (value: string) => void;
+  onSelect: (id: string) => void;
 };
 
 export default function Dropdown({
@@ -53,11 +53,11 @@ export default function Dropdown({
         <ul>
           {items.map((item) => (
             <li
-              key={item.name}
+              key={item.id}
               className={`cursor-pointer hover:bg-gray-100 select-none p-1 transition-all duration-200 ${
-                selected === item.name ? "font-bold pl-5 text-textLink" : ""
+                selected === item.id ? "font-bold pl-5 text-textLink" : ""
               }`}
-              onClick={() => onSelect(item.name)}
+              onClick={() => onSelect(item.id)}
             >
               {item.name}
             </li>

@@ -4,27 +4,27 @@ interface Busqueda {
   search: string;
   per_page?: number;
   page?: number;
-  status?: string;
-  brand?: string;
-  category?: string;
+  statusId?: string;
+  brandId?: string;
+  categoryId?: string;
 }
 
 export const getSearchResults = async ({
   search,
   per_page,
-  status,
   page,
-  brand,
-  category,
+  statusId,
+  brandId,
+  categoryId,
 }: Busqueda) => {
   try {
     const params = new URLSearchParams();
     params.append("search", search);
     if (per_page) params.append("per_page", per_page.toString());
-    if (status) params.append("status", status.toString());
-    if (brand) params.append("brand", brand.toString());
+    if (statusId) params.append("status", statusId.toString());
+    if (brandId) params.append("brand", brandId.toString());
     if (page) params.append("page", page.toString());
-    if (category) params.append("category", category.toString());
+    if (categoryId) params.append("category", categoryId.toString());
 
     const response = await api.get(`products/?${params.toString()}`);
     return response.data;

@@ -44,25 +44,25 @@ const Busqueda = () => {
     }
   };
 
-  const handleStatus = (status: string) => {
-    if (status === selectedStatus) {
+  const handleStatus = (statusId: string) => {
+    if (statusId === selectedStatus) {
       setSelectedStatus("");
     } else {
-      setSelectedStatus(status);
+      setSelectedStatus(statusId);
     }
   };
-  const handleBrand = (brand: string) => {
-    if (brand === selectedBrand) {
+  const handleBrand = (brandId: string) => {
+    if (brandId === selectedBrand) {
       setSelectedBrand("");
     } else {
-      setSelectedBrand(brand);
+      setSelectedBrand(brandId);
     }
   };
-  const handleCategory = (category: string) => {
-    if (category === selectedCategory) {
+  const handleCategory = (categoryId: string) => {
+    if (categoryId === selectedCategory) {
       setSelectedCategory("");
     } else {
-      setSelectedCategory(category);
+      setSelectedCategory(categoryId);
     }
   };
 
@@ -73,9 +73,9 @@ const Busqueda = () => {
           search: name,
           page,
           per_page: 5,
-          status: selectedStatus,
-          brand: selectedBrand,
-          category: selectedCategory,
+          statusId: selectedStatus,
+          brandId: selectedBrand,
+          categoryId: selectedCategory,
         });
         setProducts({
           total_items: data.meta.total_items,
