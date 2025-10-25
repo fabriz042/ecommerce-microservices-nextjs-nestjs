@@ -9,25 +9,25 @@ import Container from "@/components/Container";
 import Producto from "@/components/Producto";
 import Desplegable from "@/components/ui/DropdownFilter";
 
-import { PaginatedProducts } from "@/domain/entities/product";
-import { State } from "@/domain/entities/state";
-import { Brand } from "@/domain/entities/brand";
-import { Category } from "@/domain/entities/category";
+import { PaginatedProducts } from "@/types/product";
+import { Status } from "@/types/status";
+import { Brand } from "@/types/brand";
+import { Category } from "@/types/category";
 
 import { getSearchResults } from "@/services/product/product.service";
-import { getStates } from "@/services/state/state.service";
-import { getCategories } from "@/services/category/category.service";
+import { getStatus } from "@/services/status/status.service";
+import { getCategory } from "@/services/category/category.service";
 import { getBrands } from "@/services/brand/brand.service";
 
 const Busqueda = () => {
-  const [selectedState, setSelectedState] = useState<string>("");
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
   const [selectedBrand, setSelectedBrand] = useState<string>("");
   const [selectedCategory, setSelectedCategory] = useState<string>("");
 
   const [products, setProducts] = useState<PaginatedProducts>({
-    count: 0,
-    num_pages: 0,
-    results: [],
+    total_items: 0,
+    total_pages: 0,
+    data: [],
   });
 
   const pathname = usePathname();
@@ -37,19 +37,18 @@ const Busqueda = () => {
 
   const [page, setPage] = useState(1);
 
-  // Handles pagination
   const handlePageChange = (newPage: number) => {
-    if (newPage > 0 && newPage <= products.num_pages) {
+    if (newPage > 0 && newPage <= products.total_pages) {
       setPage(newPage);
       window.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
-  const handleState = (state: string) => {
-    if (state === selectedState) {
-      setSelectedState("");
+  const handleStatus = (status: string) => {
+    if (status === selectedStatus) {
+      setSelectedStatus("");
     } else {
-      setSelectedState(state);
+      setSelectedStatus(status);
     }
   };
   const handleBrand = (brand: string) => {
@@ -74,14 +73,14 @@ const Busqueda = () => {
           search: name,
           page,
           limit: 5,
-          state: selectedState,
+          status: selectedStatus,
           brand: selectedBrand,
           category: selectedCategory,
         });
         setProducts({
-          count: data.count,
-          num_pages: Math.ceil(data.count / 5),
-          results: data.results,
+          total_items: data.total_items,
+          total_pages: Math.ceil(data.total_items / 5),
+          data: data.data,
         });
       } catch (error) {
         console.error("Error fetching the product list", error);
@@ -89,7 +88,7 @@ const Busqueda = () => {
     };
 
     fetchProductos();
-  }, [name, selectedState, selectedBrand, selectedCategory, page]);
+  }, [name, selectedStatus, selectedBrand, selectedCategory, page]);
 
   // Fetch states using React Query
   const { data: brands = [] } = useQuery<Brand[]>({
@@ -97,14 +96,14 @@ const Busqueda = () => {
     queryFn: getBrands,
   });
 
-  const { data: states = [] } = useQuery<State[]>({
-    queryKey: ["states"],
-    queryFn: getStates,
+  const { data: statuses = [] } = useQuery<Status[]>({
+    queryKey: ["statuses"],
+    queryFn: getStatus,
   });
 
   const { data: categories = [] } = useQuery<Category[]>({
     queryKey: ["categories"],
-    queryFn: getCategories,
+    queryFn: getCategory,
   });
 
   return (
@@ -125,9 +124,9 @@ const Busqueda = () => {
               <div>
                 <Desplegable
                   label="Estado"
-                  items={states}
-                  selected={selectedState}
-                  onSelect={handleState}
+                  items={statuses}
+                  selected={selectedStatus}
+                  onSelect={handleStatus}
                 />
               </div>
               {/* Brand filter section */}
@@ -155,8 +154,8 @@ const Busqueda = () => {
               {/* Total products and sort by */}
               <div className="flex items-center justify-between border-gray-500 border-2 px-5">
                 <div className="text-xl p-3">
-                  <span className="font-bold">{products.count}</span> productos
-                  encontrados
+                  <span className="font-bold">{products.total_items}</span>{" "}
+                  productos encontrados
                 </div>
                 <div>
                   <select name="sort" id="sort" className="border p-2 rounded">
@@ -172,16 +171,16 @@ const Busqueda = () => {
               {/* -------------------------- Products --------------------------- */}
               <div className="border-gray-500 border-2 w-full flex justify-center">
                 <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 gap-4 border-green-500 border-2 ">
-                  {products.count === 0 ? (
+                  {products.total_items === 0 ? (
                     <p>No se encontraron productos</p>
                   ) : (
-                    products.results.map((product, index) => (
+                    products.data.map((product, index) => (
                       <Producto key={index} product={product} />
                     ))
                   )}
                 </div>
               </div>
-              {products.count !== 0 && (
+              {products.total_items !== 0 && (
                 <div className="border-red-500 border-2 text-xl p-2 text-center mt-10">
                   <div className="flex justify-center items-center gap-4">
                     <div
@@ -193,12 +192,12 @@ const Busqueda = () => {
                       <IoIosArrowBack size={35} />
                     </div>
                     <div className="text-2xl">
-                      Página {page} de {products.num_pages}
+                      Página {page} de {products.total_pages}
                     </div>
                     <div
                       onClick={() => handlePageChange(page + 1)}
                       className={`cursor-pointer ${
-                        page === products.num_pages
+                        page === products.total_pages
                           ? "opacity-0 pointer-events-none"
                           : ""
                       } transition-opacity duration-400 ease-in-out`}

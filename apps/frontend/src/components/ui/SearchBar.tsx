@@ -9,7 +9,7 @@ import { AiOutlineSearch } from "react-icons/ai";
 
 import { getSearchResults } from "@/services/product/product.service";
 
-import { Meta } from "@/types/product";
+import { PaginatedProducts } from "@/types/product";
 
 const moneda = "s/. ";
 const searchSuggestions = [
@@ -32,9 +32,9 @@ const SearchBar = () => {
   // Logic to manage the search input and results
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
-  const [productsData, setProductsData] = useState<Meta>({
-    total: 0,
-    num_pages: 0,
+  const [productsData, setProductsData] = useState<PaginatedProducts>({
+    total_items: 0,
+    total_pages: 0,
     data: [],
   });
   useEffect(() => {
@@ -68,7 +68,7 @@ const SearchBar = () => {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        setProductsData({ total: 0, num_pages: 0, data: [] });
+        setProductsData({ total_items: 0, total_pages: 0, data: [] });
         setSearchStatus("Searching...");
         const data = await getSearchResults({
           search: debouncedSearch,
@@ -174,17 +174,17 @@ const SearchBar = () => {
         className="bg-white/70 absolute w-full mt-[50px] p-3 z-20 rounded-b-[30px]"
         style={{ display: isOpen ? "block" : "none" }}
       >
-        {productsData.data.map(({ name, price, slug, images }) => (
+        {productsData.data.map(({ name, price, slug, image }) => (
           <Link href={`/productos/categoria/${slug}`} key={slug}>
             <div
               className="flex space-x-1 rounded-lg p-3 m-1 border-2 border-black-500 cursor-pointer bg-slate-200 hover:bg-slate-300 shadow-sm"
               onClick={handleSearch}
             >
               <div className="border-red-500 border-2 col-start-3 h-[70px] w-[70px] items-center flex bg-white">
-                {images && images.length > 0 && (
+                {image && image.length > 0 && (
                   <Image
-                    src={images[0].image_url}
-                    alt={images[0].alt_text}
+                    src={image[0].image_url}
+                    alt={image[0].alt_text}
                     width={70}
                     height={70}
                     className="object-contain max-w-full max-h-full"

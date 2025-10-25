@@ -4,7 +4,7 @@ interface Busqueda {
   search: string;
   limit?: number;
   page?: number;
-  state?: string;
+  status?: string;
   brand?: string;
   category?: string;
 }
@@ -12,7 +12,7 @@ interface Busqueda {
 export const getSearchResults = async ({
   search,
   limit,
-  state,
+  status,
   page,
   brand,
   category,
@@ -21,7 +21,7 @@ export const getSearchResults = async ({
     const params = new URLSearchParams();
     params.append("search", search);
     if (limit) params.append("limit", limit.toString());
-    if (state) params.append("state", state.toString());
+    if (status) params.append("status", status.toString());
     if (brand) params.append("brand", brand.toString());
     if (page) params.append("page", page.toString());
     if (category) params.append("category", category.toString());

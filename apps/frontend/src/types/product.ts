@@ -1,4 +1,6 @@
 // Interfaces for quick product data
+import { Status } from "@/types/status";
+
 export interface ImageData {
   image_url: string;
   alt_text: string;
@@ -8,13 +10,13 @@ export interface Product {
   name: string;
   price: number;
   slug: string;
-  state: string;
-  images: ImageData[];
+  status: Status;
+  image: ImageData[];
 }
 
-export interface Meta {
-  total: number;
-  num_pages: number;
+export interface PaginatedProducts {
+  total_items: number;
+  total_pages: number;
   data: Product[];
 }
 
@@ -37,5 +39,5 @@ export interface ProductDetail {
   character?: string;
   tags: Tag[];
   sports: Sport[];
-  images: ImageData[];
+  image: ImageData[];
 }
