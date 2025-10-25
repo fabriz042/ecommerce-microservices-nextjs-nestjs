@@ -4,21 +4,21 @@ import { Product } from "@/types/product";
 
 export default function Producto({ product }: { product: Product }) {
   const { image, name, price, slug, status } = product;
-  const estadoColors: { [key: string]: string } = {
+  const statusColors: { [key: string]: string } = {
     "En stock": "bg-green-300",
     "En camino": "bg-yellow-300",
     "A pedido": "bg-orange-300",
     "Pre-Orden": "bg-purple-300",
     "No disponible": "bg-gray-300",
   };
-  const estadoColor = estadoColors[status.name] || "bg-gray-300";
+  const statusColor = statusColors[status.name] || "bg-gray-300";
 
   return (
     <div>
       <Link href={`/productos/guante/${slug}`}>
         <div className="shadow-lg rounded-xl w-[200px] h-[400px] lg:w-[250px] bg-white m-5">
           <div
-            className={`${estadoColor} text-black w-[85px] p-1 z-10 text-base md:text-lg shadow-lg rounded-tl-xl rounded-br-xl text-center`}
+            className={`${statusColor} text-black w-[85px] p-1 z-10 text-base md:text-lg shadow-lg rounded-tl-xl rounded-br-xl text-center`}
           >
             {status.name}
           </div>
