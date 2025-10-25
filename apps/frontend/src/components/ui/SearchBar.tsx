@@ -72,7 +72,7 @@ const SearchBar = () => {
         setSearchStatus("Searching...");
         const data = await getSearchResults({
           search: debouncedSearch,
-          limit: 4,
+          per_page: 4,
         });
 
         setProductsData(data);

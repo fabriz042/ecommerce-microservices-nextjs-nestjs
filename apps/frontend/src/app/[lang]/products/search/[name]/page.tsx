@@ -72,14 +72,14 @@ const Busqueda = () => {
         const data = await getSearchResults({
           search: name,
           page,
-          limit: 5,
+          per_page: 5,
           status: selectedStatus,
           brand: selectedBrand,
           category: selectedCategory,
         });
         setProducts({
-          total_items: data.total_items,
-          total_pages: Math.ceil(data.total_items / 5),
+          total_items: data.meta.total_items,
+          total_pages: data.meta.total_pages,
           data: data.data,
         });
       } catch (error) {

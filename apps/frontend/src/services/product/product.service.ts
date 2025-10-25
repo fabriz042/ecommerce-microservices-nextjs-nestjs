@@ -2,7 +2,7 @@ import api from "@/services/api.service";
 
 interface Busqueda {
   search: string;
-  limit?: number;
+  per_page?: number;
   page?: number;
   status?: string;
   brand?: string;
@@ -11,7 +11,7 @@ interface Busqueda {
 
 export const getSearchResults = async ({
   search,
-  limit,
+  per_page,
   status,
   page,
   brand,
@@ -20,7 +20,7 @@ export const getSearchResults = async ({
   try {
     const params = new URLSearchParams();
     params.append("search", search);
-    if (limit) params.append("limit", limit.toString());
+    if (per_page) params.append("per_page", per_page.toString());
     if (status) params.append("status", status.toString());
     if (brand) params.append("brand", brand.toString());
     if (page) params.append("page", page.toString());
