@@ -14,7 +14,7 @@ export class ProductsService {
   async findAll(filterDto: FilterDto) {
     //Pagination params
     const page = filterDto.page ?? 1;
-    const limit = Math.min(filterDto.limit ?? 10, 100);
+    const per_page = Math.min(filterDto.per_page ?? 10, 100);
 
     //Filters
     const { search, category, status } = filterDto;
@@ -29,19 +29,19 @@ export class ProductsService {
     }
 
     if (category) {
-      where.category = { name: category };
+      where.category = { id: category };
     }
 
     if (status) {
-      where.status = { name: status };
+      where.status = { id: status };
     }
 
     //Query
     const totalResults = await this.db.product.count({ where });
     const products = await this.db.product.findMany({
       where,
-      skip: (page - 1) * limit,
-      take: limit,
+      skip: (page - 1) * per_page,
+      take: per_page,
       select: {
         name: true,
         slug: true,
@@ -53,8 +53,8 @@ export class ProductsService {
         },
         image: {
           select: {
-            imageUrl: true,
-            alt: true,
+            image_url: true,
+            alt_text: true,
             order: true,
           },
         },
@@ -62,32 +62,92 @@ export class ProductsService {
     });
 
     // Meta info
-    const totalPages = Math.ceil(totalResults / limit);
-    const hasNext = totalResults > page * limit;
+    const totalPages = Math.ceil(totalResults / per_page);
+    const hasNext = totalResults > page * per_page;
     const hasPrevious = page > 1;
 
     //Response
     return {
       meta: {
-        total: totalResults,
-        page: page,
-        perPage: limit,
-        totalPages: totalPages,
-        hasNext: hasNext,
-        hasPrevious: hasPrevious,
+        total_items: totalResults,
+        current_page: page,
+        per_page: per_page,
+        total_pages: totalPages,
+        has_next: hasNext,
+        has_previous: hasPrevious,
       },
       data: products,
     };
   }
 
   //Get one
-  async findOne(id: string) {
-    const product = await this.db.product.findUnique({
-      where: { id },
+  async findOne(slug: string) {
+    const fullProduct = await this.db.product.findUnique({
+      where: { slug },
+      include: {
+        image: true,
+        sport: true,
+        tag: true,
+        status: { select: { id: true, name: true } },
+        brand: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true } },
+        bag: true,
+        glove: true,
+        airgear: true,
+        oil: true,
+        trophy: true,
+      },
     });
 
-    if (!product) throw RpcNotFound(`Product ${id} not found`);
-    return product;
+    if (!fullProduct) throw RpcNotFound(`Product ${slug} not found`);
+
+    // Exclude product-types relations that are null and exclude foreign keys
+    const {
+      bag,
+      glove,
+      airgear,
+      oil,
+      trophy,
+      statusId,
+      brandId,
+      categoryId,
+      ...rest
+    } = fullProduct;
+
+    return {
+      ...rest,
+      ...(bag && { bag }),
+      ...(glove && { glove }),
+      ...(airgear && { airgear }),
+      ...(oil && { oil }),
+      ...(trophy && { trophy }),
+    };
+  }
+
+  //Get recommendations
+  async findRecommendations(id: string) {
+    const product = await this.db.product.findUnique({
+      where: { id },
+      select: {
+        name: true,
+        slug: true,
+        price: true,
+        status: {
+          select: {
+            name: true,
+          },
+        },
+        image: {
+          select: {
+            image_url: true,
+            alt_text: true,
+            order: true,
+          },
+        },
+      },
+    });
+    // TODO : Implement recommendation algorithm
+    return Array(6).fill(product);
   }
 
   async create(createProductDto: CreateProductDto) {
@@ -116,7 +176,7 @@ export class ProductsService {
       airgear,
       oil,
       trophy,
-      imageIds,
+      images,
       sportIds,
       tagIds,
       ...productData
@@ -133,10 +193,10 @@ export class ProductsService {
           ...(airgear && { airgear: { create: airgear } }),
           ...(oil && { oil: { create: oil } }),
           ...(trophy && { trophy: { create: trophy } }),
-          ...(imageIds &&
-            imageIds.length > 0 && {
+          ...(images &&
+            images.length > 0 && {
               image: {
-                connect: imageIds.map((id: string) => ({ id })),
+                create: images,
               },
             }),
           ...(sportIds &&
@@ -151,6 +211,11 @@ export class ProductsService {
                 connect: tagIds.map((id: string) => ({ id })),
               },
             }),
+        },
+        include: {
+          image: true,
+          sport: true,
+          tag: true,
         },
       });
       return created;
@@ -169,7 +234,16 @@ export class ProductsService {
 
   //Update
   async update(id: string, updateProductDto: UpdateProductDto) {
-    await this.findOne(id);
+    const existingProduct = await this.db.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      throw new RpcException({
+        status: 400,
+        message: `Product ${id} not found.`,
+      });
+    }
 
     const {
       bag,
@@ -177,7 +251,7 @@ export class ProductsService {
       airgear,
       oil,
       trophy,
-      imageIds,
+      images,
       sportIds,
       tagIds,
       ...productData
@@ -185,7 +259,15 @@ export class ProductsService {
 
     const updatedProduct = await this.db.product.update({
       where: { id },
-      data: { ...productData },
+      data: {
+        ...productData,
+        ...(images && {
+          image: {
+            deleteMany: {},
+            create: images,
+          },
+        }),
+      },
     });
 
     return updatedProduct;

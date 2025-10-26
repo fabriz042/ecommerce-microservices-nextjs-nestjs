@@ -1,9 +1,9 @@
 import api from "@/services/api.service";
 
-interface Busqueda {
+interface ProductSearchParams {
   search: string;
-  per_page?: number;
   page?: number;
+  per_page?: number;
   statusId?: string;
   brandId?: string;
   categoryId?: string;
@@ -11,12 +11,12 @@ interface Busqueda {
 
 export const getSearchResults = async ({
   search,
-  per_page,
   page,
+  per_page,
   statusId,
   brandId,
   categoryId,
-}: Busqueda) => {
+}: ProductSearchParams) => {
   try {
     const params = new URLSearchParams();
     params.append("search", search);
@@ -34,12 +34,22 @@ export const getSearchResults = async ({
   }
 };
 
-export const getDetalles = async (slug: string) => {
+export const getProductDetail = async (slug: string) => {
   try {
     const response = await api.get(`products/${slug}`);
     return response.data;
   } catch (error) {
     console.error("Error to fetch product details", error);
+    throw error;
+  }
+};
+
+export const getProductRecommendations = async (id: string) => {
+  try {
+    const response = await api.get(`products/${id}/recommendations`);
+    return response.data;
+  } catch (error) {
+    console.error("Error to fetch product recommendations", error);
     throw error;
   }
 };

@@ -28,6 +28,12 @@ export class ProductsController {
     return this.productsService.findOne(slug);
   }
 
+  //Get recommendations
+  @MessagePattern('findRecommendations')
+  findRecommendations(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.productsService.findRecommendations(id);
+  }
+
   //Update
   @MessagePattern('updateProduct')
   update(@Payload() updateProductDto: UpdateProductDto) {

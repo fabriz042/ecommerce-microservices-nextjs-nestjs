@@ -5,9 +5,10 @@ import { MdNavigateNext } from "react-icons/md";
 import Producto from "@/components/Producto";
 import { useState } from "react";
 
-const ProductCarousel = ({ list }: { list: number[] }) => {
+import { Product } from "@/types/product";
+
+const ProductCarousel = ({ products }: { products: Product[] }) => {
   const [startIndex, setStartIndex] = useState(0);
-  const products = [1, 2, 3, 4, 5, 6, 7, 8];
 
   const handleNext = () => {
     if (startIndex + 4 < products.length) {
@@ -52,24 +53,8 @@ const ProductCarousel = ({ list }: { list: number[] }) => {
             className="p-3 flex transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(-${startIndex * 280}px)` }}
           >
-            {/* TODO: endpoint to get recommended products */}
-            {list.map((id) => (
-              <Producto
-                key={id}
-                product={{
-                  name: "produ",
-                  price: 300,
-                  status: { id: "", name: "En stock" },
-                  image: [
-                    {
-                      id: "1",
-                      image_url: "https://example.com/image1.jpg",
-                      alt_text: "Image 1",
-                    },
-                  ],
-                  slug: "example-slug",
-                }}
-              />
+            {products.map((product) => (
+              <Producto key={product.slug} product={product} />
             ))}
             <div className="border-blue-500 border-4 m-5 w-[100px]">a</div>
           </div>

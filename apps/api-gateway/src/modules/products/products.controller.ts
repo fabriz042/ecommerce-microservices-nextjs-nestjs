@@ -38,6 +38,11 @@ export class ProductsController {
     return this.client.send('findOneProduct', { slug });
   }
 
+  @Get(':id/recommendations')
+  findRecommendations(@Param('id', ParseUUIDPipe) id: string) {
+    return this.client.send('findRecommendations', { id });
+  }
+
   @Patch(':id')
   update(
     @Param('id', ParseUUIDPipe) id: string,
