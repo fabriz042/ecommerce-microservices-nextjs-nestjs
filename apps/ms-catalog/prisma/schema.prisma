@@ -83,7 +83,7 @@ model Character {
   products Product[]
 }
 
-// Many-to-Many relations models
+// Many-to-Many relations models to Product
 model Image {
   id        String   @id @default(uuid())
   image_url  String
@@ -102,9 +102,20 @@ model Tag {
   products Product[]
 }
 
-//Sub models with special attributes
+
+//Product types with special attributes
+
+/////////////////////////////////////////////////////////////////////
+/// Bag
+/////////////////////////////////////////////////////////////////////
+model BagMaterial {
+  id    String    @id @default(uuid())
+  name  String    @unique
+
+  bags Bag[]
+}
 model Bag {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   length    Int
   width     Int
   height    Int
@@ -115,7 +126,13 @@ model Bag {
 
   productId String @unique
   product   Product @relation(fields: [productId], references: [id])
+
+  material  BagMaterial[]
 }
+
+/////////////////////////////////////////////////////////////////////
+/// Glove
+/////////////////////////////////////////////////////////////////////
 model Glove{
   id        String @id @default(uuid())
   length    Int
@@ -125,6 +142,10 @@ model Glove{
   productId String @unique
   product   Product @relation(fields: [productId], references: [id])
 }
+
+/////////////////////////////////////////////////////////////////////
+/// Airgear
+/////////////////////////////////////////////////////////////////////
 model Airgear{
   id        String @id @default(uuid())
   length    Int
@@ -137,6 +158,9 @@ model Airgear{
   product   Product @relation(fields: [productId], references: [id])
 }
 
+/////////////////////////////////////////////////////////////////////
+/// Oil
+/////////////////////////////////////////////////////////////////////
 model Oil{
   id        String @id @default(uuid())
   volume    Int
@@ -153,6 +177,17 @@ model Attribute {
   oils Oil[]
 }
 
+
+/////////////////////////////////////////////////////////////////////
+//// Trophy
+/////////////////////////////////////////////////////////////////////
+model TrophyMaterial {
+  id    String    @id @default(uuid())
+  name  String    @unique
+
+  trophies Trophy[]
+}
+
 model Trophy{
   id                String @id @default(uuid())
   length            Int
@@ -162,4 +197,6 @@ model Trophy{
 
   productId String @unique
   product   Product @relation(fields: [productId], references: [id])
+
+  material  TrophyMaterial[]
 }
