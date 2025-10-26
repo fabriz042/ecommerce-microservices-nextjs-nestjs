@@ -5,11 +5,7 @@ import { MdNavigateNext } from "react-icons/md";
 import Producto from "@/components/Producto";
 import { useState } from "react";
 
-type CarrilProductosProps = {
-  lista: number[];
-};
-
-const CarrilProductos = ({ lista }: CarrilProductosProps) => {
+const ProductCarousel = ({ list }: { list: number[] }) => {
   const [startIndex, setStartIndex] = useState(0);
   const products = [1, 2, 3, 4, 5, 6, 7, 8];
 
@@ -56,8 +52,24 @@ const CarrilProductos = ({ lista }: CarrilProductosProps) => {
             className="p-3 flex transition-transform duration-300 ease-in-out"
             style={{ transform: `translateX(-${startIndex * 280}px)` }}
           >
-            {lista.map((id) => (
-              <Producto key={id} nombre={"produ"} precio={300} estado={"listo"} slug={"trofeo_campeonato_nacional"}/>
+            {/* TODO: endpoint to get recommended products */}
+            {list.map((id) => (
+              <Producto
+                key={id}
+                product={{
+                  name: "produ",
+                  price: 300,
+                  status: { id: "", name: "En stock" },
+                  image: [
+                    {
+                      id: "1",
+                      image_url: "https://example.com/image1.jpg",
+                      alt_text: "Image 1",
+                    },
+                  ],
+                  slug: "example-slug",
+                }}
+              />
             ))}
             <div className="border-blue-500 border-4 m-5 w-[100px]">a</div>
           </div>
@@ -67,4 +79,4 @@ const CarrilProductos = ({ lista }: CarrilProductosProps) => {
   );
 };
 
-export default CarrilProductos;
+export default ProductCarousel;
