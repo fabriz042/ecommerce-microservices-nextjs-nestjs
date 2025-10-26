@@ -17,6 +17,7 @@ import {
   CreateOilDto,
   CreateTrophyDto,
 } from './types';
+import { CreateImageDto } from './types/create-image.dto';
 export class CreateProductDto {
   //Main fields
   @IsString()
@@ -72,9 +73,10 @@ export class CreateProductDto {
 
   //Many to many relations
   @IsArray()
-  @IsUUID()
+  @ValidateNested({ each: true })
+  @Type(() => CreateImageDto)
   @IsOptional()
-  imageIds?: string[];
+  images?: CreateImageDto[];
 
   @IsArray()
   @IsUUID()
