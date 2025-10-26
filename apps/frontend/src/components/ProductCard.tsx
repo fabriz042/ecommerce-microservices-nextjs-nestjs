@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Product } from "@/types/product";
 
-export default function Producto({ product }: { product: Product }) {
+export default function ProductCard({ product }: { product: Product }) {
   const { image, name, price, slug, status } = product;
   const statusColors: { [key: string]: string } = {
     "En stock": "bg-green-300",
@@ -11,6 +11,7 @@ export default function Producto({ product }: { product: Product }) {
     "Pre-Orden": "bg-purple-300",
     "No disponible": "bg-gray-300",
   };
+
   const statusColor = statusColors[status.name] || "bg-gray-300";
 
   return (
