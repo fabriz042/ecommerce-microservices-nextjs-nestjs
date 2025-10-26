@@ -2,7 +2,7 @@
 import { MdNavigateBefore } from "react-icons/md";
 import { MdNavigateNext } from "react-icons/md";
 
-import Producto from "@/components/Producto";
+import Producto from "@/components/ProductCard";
 import { useState } from "react";
 
 import { Product } from "@/types/product";

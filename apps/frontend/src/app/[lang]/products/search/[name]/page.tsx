@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 
 import Container from "@/components/Container";
-import Producto from "@/components/Producto";
+import Producto from "@/components/ProductCard";
 import Desplegable from "@/components/ui/DropdownFilter";
 
 import { PaginatedProducts } from "@/types/product";
