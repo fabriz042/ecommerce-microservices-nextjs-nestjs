@@ -2,3 +2,4 @@ ignoredBuiltDependencies: []
 
 onlyBuiltDependencies:
   - '@nestjs/core'
+  - '@prisma/client'
