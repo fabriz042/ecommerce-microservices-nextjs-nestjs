@@ -17,7 +17,7 @@ export class ProductsService {
     const per_page = Math.min(filterDto.per_page ?? 10, 100);
 
     //Filters
-    const { search, category, status } = filterDto;
+    const { search, category, status, brand } = filterDto;
 
     const where: any = {};
 
@@ -34,6 +34,10 @@ export class ProductsService {
 
     if (status) {
       where.status = { id: status };
+    }
+
+    if (brand) {
+      where.brand = { id: brand };
     }
 
     //Query

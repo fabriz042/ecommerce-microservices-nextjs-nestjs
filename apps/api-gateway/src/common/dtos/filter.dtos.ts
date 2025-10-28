@@ -13,4 +13,8 @@ export class FilterDto extends PaginationDto {
   @IsOptional()
   @IsString()
   status?: string;
+
+  @IsOptional()
+  @IsString()
+  brand?: string;
 }
