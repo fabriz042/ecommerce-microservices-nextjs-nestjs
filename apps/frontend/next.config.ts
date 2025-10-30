@@ -5,7 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: process.env.NEXT_PUBLIC_IMAGE_DOMAIN!,
+        hostname: "**",
         pathname: "/**",
       },
     ],
@@ -15,6 +15,14 @@ const nextConfig: NextConfig = {
       {
         source: "/es/productos/busqueda/:path*",
         destination: "/en/products/search/:path*",
+      },
+      {
+        source: "/es/productos/:category",
+        destination: "/en/products/:category",
+      },
+      {
+        source: "/es/productos/:category/:path*",
+        destination: "/en/products/:category/:path*",
       },
       {
         source: "/es/acerca",
