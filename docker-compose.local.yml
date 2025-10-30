@@ -58,7 +58,24 @@ services:
     volumes:
       - pgdata-auth:/var/lib/postgresql/data
 
+  # MS-CONTENT Database
+  ms-content-db:
+    image: postgres:15-alpine
+    container_name: ms-content-db
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    environment:
+      POSTGRES_USER: ${CONTENT_MS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${CONTENT_MS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${CONTENT_MS_POSTGRES_DB}
+    ports:
+      - "5436:5432"
+    volumes:
+      - pgdata-content:/var/lib/postgresql/data
+
 volumes:
   pgdata-catalog:
   pgdata-orders:
   pgdata-auth:
+  pgdata-content:

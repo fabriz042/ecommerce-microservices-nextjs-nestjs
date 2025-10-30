@@ -10,6 +10,7 @@ import {
   AuthModule,
   SeriesModule,
   CharacterModule,
+  BlogModule,
 } from './modules';
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import {
     StatusModule,
     CharacterModule,
     SeriesModule,
+    BlogModule,
   ],
 })
 export class AppModule {}
