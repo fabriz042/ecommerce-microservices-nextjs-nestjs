@@ -5,6 +5,7 @@ import Header from "@/components/layout/header";
 import Footer from "@/components/layout/footer";
 import QueryProvider from "@/providers/QueryProvider";
 import { I18nProvider } from "@/providers/I18nProvider";
+import BurbuWhatsapp from "@/components/ui/WhtsppButton";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <BurbuWhatsapp />
         <I18nProvider>
           <QueryProvider>
             <Header />

@@ -16,12 +16,10 @@ import {
 } from "@/components/ui/accordion";
 
 import Container from "@/components/Container";
-import BurbuWhatsapp from "@/components/ui/WhtsppButton";
 
 export default function Home() {
   return (
     <div className="mx-auto">
-      <BurbuWhatsapp />
       {/*Carousel*/}
       <Carousel className="w-full" opts={{ loop: true }}>
         <CarouselContent className="h-[800px]">
