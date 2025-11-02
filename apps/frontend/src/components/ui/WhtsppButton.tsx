@@ -9,7 +9,7 @@ const BurbuWhatsapp = () => {
       aria-label="Contactarse por whatsapp"
       target="_blank"
       rel="noopener noreferrer"
-      className="bottom-0 right-0 fixed w-[85px] h-[85px] mb-[2%] mr-[2%]"
+      className="bottom-0 right-0 fixed w-[85px] h-[85px] mb-[2%] mr-[2%] z-99"
     >
       <Image
         src="/icon-whats.webp"
