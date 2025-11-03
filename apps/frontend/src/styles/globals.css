@@ -88,7 +88,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground text-base;
+    @apply bg-background text-foreground text-lg;
     font-family: var(--font-acme), sans-serif;
   }
 }
