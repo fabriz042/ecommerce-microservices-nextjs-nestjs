@@ -6,8 +6,8 @@ interface ContainerProps {
 
 const Container: React.FC<ContainerProps> = ({ children }) => {
   return (
-    <div className="flex flex-col justify-center items-center">
-      <div className="border-green-500 border-2 w-full max-w-[1300px] px-[0.5%] mt-2 mb-2">
+    <div className="flex flex-col justify-center items-center debug">
+      <div className="w-full max-w-[1300px] px-[0.5%] mt-4 mb-4">
         {children}
       </div>
     </div>
