@@ -2,14 +2,15 @@
 import { Status } from "@/types/status";
 
 export interface ImageData {
+  id: string;
   image_url: string;
   alt_text: string;
 }
 
 export interface Product {
   name: string;
-  price: number;
   slug: string;
+  price: number;
   status: Status;
   image: ImageData[];
 }
@@ -23,6 +24,8 @@ export interface PaginatedProducts {
 //Interfaces for detailed product information
 import { Tag } from "@/types/tag";
 import { Sport } from "@/types/sport";
+import { Brand } from "./brand";
+import { Category } from "./category";
 
 export interface ProductDetail {
   id: string;
@@ -32,9 +35,10 @@ export interface ProductDetail {
   description: string;
   slug: string;
   weight: number;
-  state: string;
-  brand: string;
-  category: string;
+  brand: Brand;
+  includes: string;
+  category: Category;
+  status: Status;
   series?: string;
   character?: string;
   tags: Tag[];

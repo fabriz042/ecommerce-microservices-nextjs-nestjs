@@ -17,13 +17,13 @@ export default function ProductCard({ product }: { product: Product }) {
   return (
     <div>
       <Link href={`/productos/guante/${slug}`}>
-        <div className="shadow-lg rounded-xl w-[200px] h-[400px] lg:w-[250px] bg-white m-5">
+        <div className="shadow-[0_4px_10px_rgba(0,0,0,0.20)] rounded-xl w-[200px] h-[400px] lg:w-[250px] bg-white m-5">
           <div
             className={`${statusColor} text-black w-[85px] p-1 z-10 text-base md:text-lg shadow-lg rounded-tl-xl rounded-br-xl text-center`}
           >
             {status.name}
           </div>
-          <div className="border-green-500 border-2 flex h-[250px] w-[250px] justify-center items-center">
+          <div className="flex h-[250px] w-[250px] justify-center items-center">
             <Image
               src={image[0]?.image_url}
               alt={image[0]?.alt_text}
@@ -33,16 +33,13 @@ export default function ProductCard({ product }: { product: Product }) {
             />
           </div>
           <div>
-            <div className="border-red-500 border-2 h-[65px]">
-              <p className="text-black text-base md:text-2xl text-left leading-none pl-2">
-                {name}
-              </p>
+            <div className="h-[65px]">
+              <p className="text-black text-2xl pl-2 text-right">{name}</p>
             </div>
-            <div className="border-green-500 border-2 p-1.5">
-              <p className="text-black text-base md:text-2xl text-left font-acme pl-2">
-                s/. {price.toLocaleString("en-US")}
-              </p>
-            </div>
+
+            <p className="text-black text-2xl pl-2 text-right">
+              s/. {price.toLocaleString("en-US")}
+            </p>
           </div>
         </div>
       </Link>
