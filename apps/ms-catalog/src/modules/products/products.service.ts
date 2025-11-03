@@ -5,6 +5,7 @@ import { DatabaseService } from '../../common/database.service';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FilterDto } from 'src/common/dtos/filter.dtos';
+import { ToolCallRequestDto } from './dto/mcp-request.dto';
 
 @Injectable()
 export class ProductsService {
@@ -283,11 +284,13 @@ export class ProductsService {
     return this.db.product.delete({ where: { id } });
   }
 
-  //---------------------------------------------
-  // Additional methods to other ms
-  //---------------------------------------------
+  //---------------------------------------------------------------
+  // Additional methods to other microservices
+  //---------------------------------------------------------------
 
-  //Validate products
+  //---------------------------------------------------------------
+  // MS-ORDERS
+
   async validateProduct(ids: string[]) {
     ids = Array.from(new Set(ids));
     const products = await this.db.product.findMany({
@@ -303,5 +306,38 @@ export class ProductsService {
       });
 
     return products;
+  }
+
+  //----------------------------------------------------------------
+  // MS-CHATBOT
+
+  async searchProducts(toolCallRequestDto: ToolCallRequestDto) {
+    const { id, function: func } = toolCallRequestDto;
+
+    const args = JSON.parse(func.arguments);
+    const query = args.query;
+
+    console.log('Searching products with query:', query);
+
+    const products = await this.db.product.findMany({
+      where: {
+        name: {
+          contains: query,
+          mode: 'insensitive',
+        },
+      },
+      select: {
+        name: true,
+        price: true,
+      },
+    });
+
+    //TODO: make a response DTO
+    return {
+      role: 'tool',
+      name: func.name,
+      tool_call_id: id,
+      content: products,
+    };
   }
 }

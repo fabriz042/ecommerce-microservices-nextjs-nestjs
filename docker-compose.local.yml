@@ -74,8 +74,25 @@ services:
     volumes:
       - pgdata-content:/var/lib/postgresql/data
 
+    # MS-AI Database
+  ms-ai-db:
+    image: postgres:15-alpine
+    container_name: ms-ai-db
+    restart: unless-stopped
+    labels:
+      app: ecommerce
+    environment:
+      POSTGRES_USER: ${AI_MS_POSTGRES_USER}
+      POSTGRES_PASSWORD: ${AI_MS_POSTGRES_PASSWORD}
+      POSTGRES_DB: ${AI_MS_POSTGRES_DB}
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata-ai:/var/lib/postgresql/data
+
 volumes:
   pgdata-catalog:
   pgdata-orders:
   pgdata-auth:
+  pgdata-ai:
   pgdata-content:

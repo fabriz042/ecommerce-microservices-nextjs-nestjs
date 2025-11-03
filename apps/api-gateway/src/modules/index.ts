@@ -7,3 +7,4 @@ export * from './auth/auth.module';
 export * from './series/series.module';
 export * from './character/character.module';
 export * from './blog/blog.module';
+export * from './chatbot/chatbot.module';

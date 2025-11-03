@@ -10,6 +10,7 @@ import {
   AuthModule,
   SeriesModule,
   CharacterModule,
+  ChatbotModule,
   BlogModule,
 } from './modules';
 @Module({
@@ -27,6 +28,7 @@ import {
     StatusModule,
     CharacterModule,
     SeriesModule,
+    ChatbotModule,
     BlogModule,
   ],
 })

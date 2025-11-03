@@ -1,0 +1,3 @@
+//export const CATALOG_SERVICE = 'CATALOG_SERVICE';
+
+export const NATS_SERVICE = 'NATS_SERVICE';

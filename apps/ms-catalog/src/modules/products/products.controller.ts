@@ -5,6 +5,7 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PaginationDto } from 'src/common/dtos/pagination.dto';
 import { FilterDto } from 'src/common/dtos/filter.dtos';
+import { ToolCallRequestDto } from './dto/mcp-request.dto';
 
 @Controller()
 export class ProductsController {
@@ -46,8 +47,17 @@ export class ProductsController {
     return this.productsService.remove(id);
   }
 
+  //---------------------------------------------------------------
+  // MS-ORDERS
   @MessagePattern('validateProduct')
   validateProduct(@Payload() id: string[]) {
     return this.productsService.validateProduct(id);
+  }
+
+  //----------------------------------------------------------------
+  // MS-CHATBOT
+  @MessagePattern('MCPsearchProducts')
+  searchProducts(@Payload() toolCallRequestDto: ToolCallRequestDto) {
+    return this.productsService.searchProducts(toolCallRequestDto);
   }
 }
