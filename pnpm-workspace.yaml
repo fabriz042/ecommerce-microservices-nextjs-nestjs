@@ -9,6 +9,7 @@ onlyBuiltDependencies:
   - '@tailwindcss/oxide'
   - bcrypt
   - core-js
+  - lzo
   - prisma
   - sharp
   - unrs-resolver
