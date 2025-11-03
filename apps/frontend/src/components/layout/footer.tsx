@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer className="bottom-0 bg-gray-700">
       <Container>
-        <div className="flex p-6 justify-evenly mb-12 text-gray-100">
+        <div className="flex p-6 justify-evenly mb-24 text-gray-100">
           <div className="space-y-4">
             <p className="font-bold">Envios</p>
             <ul className="space-y-2">
@@ -21,7 +21,7 @@ export default function Footer() {
           <div className="space-y-4">
             <p className="font-bold">Sobre Nosotros</p>
             <ul className="space-y-2">
-              <li>Sobre Nombre</li>
+              <li>Sobre SpryUp</li>
               <li>Términos y Condiciones</li>
               <li>Blog</li>
             </ul>
@@ -35,7 +35,7 @@ export default function Footer() {
               </li>
               <li className="flex items-center">
                 <MdOutlineEmail size={22} className="mr-2" />
-                info@ejemplo.com
+                info@spryup.com
               </li>
               <li>7:30 AM - 5:30 PM</li>
               <li className="flex items-center space-x-4">
@@ -45,8 +45,8 @@ export default function Footer() {
           </div>
         </div>
       </Container>
-      <div className="bg-gray-800 text-white h-[40px] flex justify-center items-center">
-        <div>Hecho por Nombre</div>
+      <div className="bg-gray-800 text-white h-10 flex justify-center items-center">
+        <div>SpryUp © 2025</div>
       </div>
     </footer>
   );
