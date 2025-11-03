@@ -17,40 +17,47 @@ export default function Header() {
   const { t } = useTranslation("common");
 
   return (
-    <header className="justify-center flex top-0 relative">
-      {/*Country and lang*/}
-      <div className="absolute top-0 right-0 z-50 flex p-3 space-x-3">
-        <DropdownCountry />
-        <SwitchLang />
-      </div>
-      <div className="flex fixed space-x-12 z-50 items-center">
+    <header className="justify-center flex top-0 relative debug">
+      <div className="flex relative space-x-12 z-50 items-center bg-gray-800 shadow-xl w-full justify-center h-20">
+        {/*Country and lang*/}
+        <div className="absolute top-0 right-0  flex p-2 space-x-3 ">
+          <DropdownCountry />
+          <SwitchLang />
+        </div>
         {/*Logo*/}
         <div>
           <Link href={`/${language}`}>
-            <Image src="/logo.png" alt="Logo" width={150} height={150} />
+            <Image
+              src="/images/MainLogo.png"
+              alt="Logo"
+              width={170}
+              height={170}
+            />
           </Link>
         </div>
-        {/*Menu Categorias*/}
+        {/*Categories Menu*/}
         <div className="flex space-x-5">
           <div>
-            <h1 className="text-2xl text-title font-medium">
+            <h1 className="text-2xl text-title cursor-pointer hover:underline">
               {t("categories")}
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl text-title font-medium">
+            <h1 className="text-2xl text-title cursor-pointer">
               {t("promotions")}
             </h1>
           </div>
           <div>
-            <h1 className="text-2xl text-title font-medium">{t("blog")}</h1>
+            <Link href={`/${language}/blog`}>
+              <h1 className="text-2xl text-title">{t("blog")}</h1>
+            </Link>
           </div>
         </div>
-        {/*Barra Busqueda*/}
+        {/*Search Bar*/}
         <div>
           <SearchBar />
         </div>
-        {/*Menu Usuario*/}
+        {/*User Menu*/}
         <div className="flex space-x-3">
           <AiOutlineUser className="h-10 w-10 text-title" />
           <MdFavoriteBorder className="h-10 w-10 text-title" />
