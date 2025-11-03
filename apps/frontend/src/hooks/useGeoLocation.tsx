@@ -9,11 +9,11 @@ const getCountryConfig = (code: string) => {
 
 const countryConfig = {
   CL: { name: "Chile", currency: "USD" },
-  PE: { name: "Peru", currency: "PEN" },
+  PE: { name: "Peru", currency: "s./" },
   MX: { name: "Mexico", currency: "MXN" },
 };
 
-// Función para leer localStorage
+// Function to get data from localStorage
 const getStorageValue = (key: string) => {
   try {
     const item = localStorage.getItem(key);
@@ -26,10 +26,10 @@ const getStorageValue = (key: string) => {
 export const useGeoLocation = () => {
   const [location, setLocation] = useState({
     countryName: "Peru",
-    currency: "PEN",
+    currency: "s./",
   });
 
-  // Función para cambiar ubicación manualmente
+  // Function to change location manually
   const changeLocation = (countryCode: string) => {
     const config = getCountryConfig(countryCode);
 
@@ -43,14 +43,14 @@ export const useGeoLocation = () => {
   };
 
   useEffect(() => {
-    // Primero verificar si ya existe en localStorage
+    // First check if it already exists in localStorage
     const savedData = getStorageValue("geoLocation");
     if (savedData) {
       setLocation(savedData);
-      return; // Si existe data guardada, no hacer fetch
+      return; // If there is saved data, do not fetch
     }
 
-    // Solo hacer fetch si no hay data guardada
+    // Only fetch if there is no saved data
     const detectLocation = async () => {
       try {
         const response = await fetch("https://ipapi.co/json/");
@@ -69,7 +69,7 @@ export const useGeoLocation = () => {
       } catch {
         const fallback = {
           countryName: "Peru",
-          currency: "PEN",
+          currency: "s./",
         };
         setLocation(fallback);
         localStorage.setItem("geoLocation", JSON.stringify(fallback));
