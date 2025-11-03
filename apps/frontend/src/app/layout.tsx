@@ -6,6 +6,7 @@ import Footer from "@/components/layout/footer";
 import QueryProvider from "@/providers/QueryProvider";
 import { I18nProvider } from "@/providers/I18nProvider";
 import BurbuWhatsapp from "@/components/ui/WhtsppButton";
+import Chat from "@/components/Chat";
 
 const acme = Acme({
   weight: "400",
@@ -26,6 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${acme.variable} antialiased`}>
+        <Chat />
         <BurbuWhatsapp />
         <I18nProvider>
           <QueryProvider>

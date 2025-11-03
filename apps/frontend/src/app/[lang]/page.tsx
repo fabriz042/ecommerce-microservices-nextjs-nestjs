@@ -8,7 +8,6 @@ import {
 import Image from "next/image";
 
 import Container from "@/components/Container";
-import Chat from "@/components/Chat";
 import ProductCarousel from "@/components/ProductCarousel";
 import FaqSection from "@/components/FaqSection";
 import BrandsScroll from "@/components/BrandsScroll";
@@ -105,8 +104,6 @@ export default async function Home() {
             style={{ width: "100vw", height: "80px" }}
           />
         </div>
-        {/*Chat Section*/}
-        <Chat />
         {/*Category Section*/}
         <Container>
           <div className="bg-white rounded-lg flex flex-col items-center p-8 space-y-8 mt-5">
