@@ -332,6 +332,15 @@ export class ProductsService {
       },
     });
 
+    if (products.length === 0) {
+      return {
+        role: 'tool',
+        name: func.name,
+        tool_call_id: id,
+        content: [{ message: 'Not found products with query: ' + query }],
+      };
+    }
+
     //TODO: make a response DTO
     return {
       role: 'tool',
