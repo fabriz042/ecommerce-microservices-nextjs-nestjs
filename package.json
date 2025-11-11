@@ -6,7 +6,9 @@
   "scripts": {
     "dev-all": "turbo run dev",
     "dev:frontend": "turbo run dev --filter=frontend",
-    "dev:backend": "turbo run dev --filter=api-gateway --filter=ms-*",
+    "dev:all-backend": "turbo run dev --filter=api-gateway --filter=ms-*",
+    "dev:basic-backend": "turbo run dev --filter=api-gateway --filter=ms-catalog",
+    "dev:mobile": "turbo run dev --filter=mobile",
     "build": "turbo run build",
     "preinstall": "npx only-allow pnpm"
   },
