@@ -1,35 +1,47 @@
 import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { StatusService } from './status.service';
-import { CreateStatusDto } from './dto/create-status.dto';
-import { UpdateStatusDto } from './dto/update-status.dto';
+import { CreateStatusDto, UpdateStatusDto } from "@packages/shared-back";
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Controller()
 export class StatusController {
-  constructor(private readonly statusService: StatusService) {}
+  constructor(private readonly statusService: StatusService) { }
 
-  @MessagePattern('createStatus')
-  create(@Payload() createStatusDto: CreateStatusDto) {
-    return this.statusService.create(createStatusDto);
-  }
-
+  //---------------------------------------------------------------
+  // PUBLIC METHODS
+  //---------------------------------------------------------------
   @MessagePattern('findAllStatus')
   findAll() {
     return this.statusService.findAll();
   }
 
-  @MessagePattern('findOneStatus')
-  findOne(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.statusService.findOne(id);
+  //---------------------------------------------------------------
+  // ADMIN METHODS
+  //---------------------------------------------------------------
+  @MessagePattern('adminFindAllStatus')
+  adminFindAll(@Payload() filterDto: FilterDto) {
+    return this.statusService.adminFindAll(filterDto);
   }
 
-  @MessagePattern('updateStatus')
-  update(@Payload() updateStatusDto: UpdateStatusDto) {
-    return this.statusService.update(updateStatusDto.id, updateStatusDto);
+  @MessagePattern('adminFindOneStatus')
+  adminFindOne(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.statusService.adminFindOne(id);
   }
 
-  @MessagePattern('removeStatus')
-  remove(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.statusService.remove(id);
+  @MessagePattern('adminCreateStatus')
+  adminCreate(@Payload() createStatusDto: CreateStatusDto) {
+    return this.statusService.adminCreate(createStatusDto);
+  }
+
+  @MessagePattern('adminUpdateStatus')
+  adminUpdate(@Payload() payload: any) {
+    const { id, ...updateStatusDto } = payload;
+    return this.statusService.adminUpdate(id, updateStatusDto);
+  }
+
+  @MessagePattern('adminRemoveStatus')
+  adminRemove(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.statusService.adminRemove(id);
   }
 }

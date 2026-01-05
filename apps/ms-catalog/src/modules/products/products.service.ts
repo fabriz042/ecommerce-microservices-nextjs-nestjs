@@ -1,15 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { RpcNotFound } from '@packages/shared';
 import { RpcException } from '@nestjs/microservices';
 import { DatabaseService } from '../../common/database.service';
-import { CreateProductDto } from './dto/create-product.dto';
-import { UpdateProductDto } from './dto/update-product.dto';
-import { FilterDto } from 'src/common/dtos/filter.dtos';
-import { ToolCallRequestDto } from './dto/mcp-request.dto';
+import { CreateProductDto, UpdateProductDto, ToolCallRequestDto } from "@packages/shared-back"
+import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Injectable()
 export class ProductsService {
-  constructor(private readonly db: DatabaseService) {}
+  constructor(private readonly db: DatabaseService) { }
 
   //Get all
   async findAll(filterDto: FilterDto) {
@@ -56,7 +53,7 @@ export class ProductsService {
             name: true,
           },
         },
-        image: {
+        images: {
           select: {
             image_url: true,
             alt_text: true,
@@ -90,9 +87,9 @@ export class ProductsService {
     const fullProduct = await this.db.product.findUnique({
       where: { slug },
       include: {
-        image: true,
-        sport: true,
-        tag: true,
+        images: true,
+        sports: true,
+        tags: true,
         status: { select: { id: true, name: true } },
         brand: { select: { id: true, name: true } },
         category: { select: { id: true, name: true } },
@@ -104,7 +101,12 @@ export class ProductsService {
       },
     });
 
-    if (!fullProduct) throw RpcNotFound(`Product ${slug} not found`);
+    if (!fullProduct) {
+      throw new RpcException({
+        status: 404,
+        message: `Product ${slug} not found`,
+      });
+    }
 
     // Exclude product-types relations that are null and exclude foreign keys
     const {
@@ -142,7 +144,7 @@ export class ProductsService {
             name: true,
           },
         },
-        image: {
+        images: {
           select: {
             image_url: true,
             alt_text: true,
@@ -187,6 +189,12 @@ export class ProductsService {
       ...productData
     } = createProductDto;
 
+    // Convert trophy dates to ISO string
+    if (trophy) {
+      trophy.release_date = new Date(trophy.release_date).toISOString();
+      trophy.expiration_date = new Date(trophy.expiration_date).toISOString();
+    }
+
     // Save the product to the database
     try {
       const created = await this.db.product.create({
@@ -200,27 +208,27 @@ export class ProductsService {
           ...(trophy && { trophy: { create: trophy } }),
           ...(images &&
             images.length > 0 && {
-              image: {
-                create: images,
-              },
-            }),
+            images: {
+              create: images,
+            },
+          }),
           ...(sportIds &&
             sportIds.length > 0 && {
-              sport: {
-                connect: sportIds.map((id: string) => ({ id })),
-              },
-            }),
+            sport: {
+              connect: sportIds.map((id: string) => ({ id })),
+            },
+          }),
           ...(tagIds &&
             tagIds.length > 0 && {
-              tag: {
-                connect: tagIds.map((id: string) => ({ id })),
-              },
-            }),
+            tag: {
+              connect: tagIds.map((id: string) => ({ id })),
+            },
+          }),
         },
         include: {
-          image: true,
-          sport: true,
-          tag: true,
+          images: true,
+          sports: true,
+          tags: true,
         },
       });
       return created;
@@ -262,12 +270,23 @@ export class ProductsService {
       ...productData
     } = updateProductDto;
 
+    // Convert trophy dates to ISO string
+    if (trophy) {
+      trophy.release_date = new Date(trophy.release_date).toISOString();
+      trophy.expiration_date = new Date(trophy.expiration_date).toISOString();
+    }
+
     const updatedProduct = await this.db.product.update({
       where: { id },
       data: {
         ...productData,
+        ...(bag && { bag: { upsert: { create: bag, update: bag } } }),
+        ...(glove && { glove: { upsert: { create: glove, update: glove } } }),
+        ...(airgear && { airgear: { upsert: { create: airgear, update: airgear } } }),
+        ...(oil && { oil: { upsert: { create: oil, update: oil } } }),
+        ...(trophy && { trophy: { upsert: { create: trophy, update: trophy } } }),
         ...(images && {
-          image: {
+          images: {
             deleteMany: {},
             create: images,
           },
@@ -276,12 +295,6 @@ export class ProductsService {
     });
 
     return updatedProduct;
-  }
-
-  //Delete
-  async remove(id: string) {
-    await this.findOne(id);
-    return this.db.product.delete({ where: { id } });
   }
 
   //---------------------------------------------------------------
@@ -349,4 +362,146 @@ export class ProductsService {
       content: products,
     };
   }
+
+
+
+  //---------------------------------------------------------------
+  // ADMIN METHODS
+  //---------------------------------------------------------------
+
+  // Admin - Get all
+  async AdminfindAll(filterDto: FilterDto) {
+    //Pagination params
+    const page = filterDto.page ?? 1;
+    const per_page = Math.min(filterDto.per_page ?? 10, 100);
+
+    //Filters
+    const { search, category, status, brand } = filterDto;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { category: { name: { contains: search, mode: 'insensitive' } } },
+      ];
+    }
+
+    if (category) {
+      where.category = { id: category };
+    }
+
+    if (status) {
+      where.status = { id: status };
+    }
+
+    if (brand) {
+      where.brand = { id: brand };
+    }
+
+    //Query
+    const totalResults = await this.db.product.count({ where });
+    const products = await this.db.product.findMany({
+      where,
+      skip: (page - 1) * per_page,
+      take: per_page,
+      select: {
+        id: true,
+        name: true,
+        slug: true,
+        price: true,
+        category: {
+          select: {
+            name: true,
+          },
+        },
+        status: {
+          select: {
+            name: true,
+          },
+        },
+        stock: true,
+        images: {
+          select: {
+            image_url: true,
+            alt_text: true,
+            order: true,
+          },
+        },
+      },
+    });
+
+    // Meta info
+    const totalPages = Math.ceil(totalResults / per_page);
+    const hasNext = totalResults > page * per_page;
+    const hasPrevious = page > 1;
+
+    //Response
+    return {
+      meta: {
+        total_items: totalResults,
+        current_page: page,
+        per_page: per_page,
+        total_pages: totalPages,
+        has_next: hasNext,
+        has_previous: hasPrevious,
+      },
+      data: products,
+    };
+  }
+
+  //Get one
+  async AdminfindOne(id: string) {
+    const fullProduct = await this.db.product.findUnique({
+      where: { id },
+      include: {
+        images: true,
+        sports: true,
+        tags: true,
+        status: { select: { id: true, name: true } },
+        brand: { select: { id: true, name: true } },
+        category: { select: { id: true, name: true } },
+        bag: true,
+        glove: true,
+        airgear: true,
+        oil: true,
+        trophy: true,
+      },
+    });
+
+    if (!fullProduct) {
+      throw new RpcException({
+        status: 404,
+        message: `Product ${id} not found`,
+      });
+    }
+
+    // Exclude product-types relations that are null and exclude foreign keys
+    const {
+      bag,
+      glove,
+      airgear,
+      oil,
+      trophy,
+      statusId,
+      brandId,
+      categoryId,
+      ...rest
+    } = fullProduct;
+
+    return {
+      ...rest,
+      ...(bag && { bag }),
+      ...(glove && { glove }),
+      ...(airgear && { airgear }),
+      ...(oil && { oil }),
+      ...(trophy && { trophy }),
+    };
+  }
+
+  async remove(id: string) {
+    return this.db.product.delete({ where: { id } });
+  }
+
 }
+

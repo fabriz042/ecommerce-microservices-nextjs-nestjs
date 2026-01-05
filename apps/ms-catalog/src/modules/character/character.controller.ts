@@ -1,38 +1,47 @@
 import { Controller, ParseUUIDPipe } from '@nestjs/common';
 import { CharacterService } from './character.service';
-import { CreateCharacterDto } from './dto/create-character.dto';
-import { UpdateCharacterDto } from './dto/update-character.dto';
+import { CreateCharacterDto, UpdateCharacterDto } from "@packages/shared-back";
 import { MessagePattern, Payload } from '@nestjs/microservices';
+import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Controller()
 export class CharacterController {
-  constructor(private readonly characterService: CharacterService) {}
+  constructor(private readonly characterService: CharacterService) { }
 
-  @MessagePattern('createCharacter')
-  create(@Payload() createCharacterDto: CreateCharacterDto) {
-    return this.characterService.create(createCharacterDto);
-  }
-
+  //---------------------------------------------------------------
+  // PUBLIC METHODS
+  //---------------------------------------------------------------
   @MessagePattern('findAllCharacter')
   findAll() {
     return this.characterService.findAll();
   }
 
-  @MessagePattern('findOneCharacter')
-  findOne(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.characterService.findOne(id);
+  //---------------------------------------------------------------
+  // ADMIN METHODS
+  //---------------------------------------------------------------
+  @MessagePattern('adminFindAllCharacter')
+  adminFindAll(@Payload() filterDto: FilterDto) {
+    return this.characterService.adminFindAll(filterDto);
   }
 
-  @MessagePattern('updateCharacter')
-  update(@Payload() updateCharacterDto: UpdateCharacterDto) {
-    return this.characterService.update(
-      updateCharacterDto.id,
-      updateCharacterDto,
-    );
+  @MessagePattern('adminFindOneCharacter')
+  adminFindOne(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.characterService.adminFindOne(id);
   }
 
-  @MessagePattern('removeCharacter')
-  remove(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.characterService.remove(id);
+  @MessagePattern('adminCreateCharacter')
+  adminCreate(@Payload() createCharacterDto: CreateCharacterDto) {
+    return this.characterService.adminCreate(createCharacterDto);
+  }
+
+  @MessagePattern('adminUpdateCharacter')
+  adminUpdate(@Payload() payload: any) {
+    const { id, ...updateCharacterDto } = payload;
+    return this.characterService.adminUpdate(id, updateCharacterDto);
+  }
+
+  @MessagePattern('adminRemoveCharacter')
+  adminRemove(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.characterService.adminRemove(id);
   }
 }

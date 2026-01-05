@@ -1,8 +1,8 @@
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from "@packages/shared-back";
 import { PrismaClient } from '../../../generated/prisma';
-import { RpcNotFound, RpcConflictException } from '@packages/shared/';
+import { RpcException } from '@nestjs/microservices';
+import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Injectable()
 export class CategoryService extends PrismaClient implements OnModuleInit {
@@ -13,49 +13,104 @@ export class CategoryService extends PrismaClient implements OnModuleInit {
     this.logger.log('____________Category connected to the database');
   }
 
-  //Get all
+  //---------------------------------------------------------------
+  // PUBLIC METHODS
+  //---------------------------------------------------------------
+
   findAll() {
     return this.category.findMany();
   }
 
-  //Get one
-  async findOne(id: string) {
-    const category = await this.category.findFirst({
-      where: { id },
+  //---------------------------------------------------------------
+  // ADMIN METHODS
+  //---------------------------------------------------------------
+
+  // Admin - Get all
+  async adminFindAll(filterDto: FilterDto) {
+    //Pagination params
+    const page = filterDto.page ?? 1;
+    const per_page = Math.min(filterDto.per_page ?? 10, 100);
+
+    //Filters
+    const { search } = filterDto;
+
+    const where: any = {};
+
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+      ];
+    }
+
+    //Query
+    const totalResults = await this.category.count({ where });
+    const categories = await this.category.findMany({
+      where,
+      skip: (page - 1) * per_page,
+      take: per_page,
+      select: {
+        id: true,
+        name: true,
+      },
     });
-    if (!category) throw RpcNotFound(`Category ${id} not found`);
+
+    // Meta info
+    const totalPages = Math.ceil(totalResults / per_page);
+    const hasNext = totalResults > page * per_page;
+    const hasPrevious = page > 1;
+
+    //Response
+    return {
+      meta: {
+        total_items: totalResults,
+        current_page: page,
+        per_page: per_page,
+        total_pages: totalPages,
+        has_next: hasNext,
+        has_previous: hasPrevious,
+      },
+      data: categories,
+    };
+  }
+
+  // Admin - Get one
+  async adminFindOne(id: string) {
+    const category = await this.category.findUnique({ where: { id } });
+    if (!category) {
+      throw new RpcException({
+        status: 404,
+        message: `Category ID ${id} not found`,
+      });
+    }
     return category;
   }
 
-  //Create
-  create(createCategoryDto: CreateCategoryDto) {
-    return this.category.create({
-      data: createCategoryDto,
-    });
+  // Admin - Create
+  adminCreate(createCategoryDto: CreateCategoryDto) {
+    return this.category.create({ data: createCategoryDto });
   }
 
-  //Update
-  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
-    await this.findOne(id);
-
-    const updatedCategory = await this.category.update({
+  // Admin - Update
+  async adminUpdate(id: string, updateCategoryDto: UpdateCategoryDto) {
+    await this.adminFindOne(id);
+    return this.category.update({
       where: { id },
       data: updateCategoryDto,
     });
-    return updatedCategory;
   }
 
-  //Delete
-  async remove(id: string) {
+  // Admin - Delete
+  async adminRemove(id: string) {
+    await this.adminFindOne(id);
     const relatedProducts = await this.product.findMany({
       where: { categoryId: id },
     });
-    if (relatedProducts)
-      throw RpcConflictException(`There are products related to this category`);
-
-    await this.findOne(id);
-    return this.category.delete({
-      where: { id },
-    });
+    if (relatedProducts.length > 0) {
+      throw new RpcException({
+        status: 409,
+        message: `There are products related to this category`,
+      });
+    }
+    return this.category.delete({ where: { id } });
   }
 }

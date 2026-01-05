@@ -6,6 +6,7 @@ import { BrandModule } from './modules/brand/brand.module';
 import { StatusModule } from './modules/status/status.module';
 import { SeriesModule } from './modules/series/series.module';
 import { CharacterModule } from './modules/character/character.module';
+import { AttributeModule } from './modules/attribute/attribute.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -13,6 +14,7 @@ import { CharacterModule } from './modules/character/character.module';
       envFilePath: '.env',
     }),
     CategoryModule,
+    AttributeModule,
     ProductsModule,
     BrandModule,
     StatusModule,
@@ -22,4 +24,4 @@ import { CharacterModule } from './modules/character/character.module';
   controllers: [],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }

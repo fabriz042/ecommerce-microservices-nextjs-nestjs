@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
-import { RpcException } from '@nestjs/microservices';
-import { CreateStatusDto, UpdateStatusDto } from '@packages/shared-back';
+import { CreateAttributeDto, UpdateAttributeDto } from "@packages/shared-back";
 import { DatabaseService } from '@/common/database.service';
+import { RpcException } from '@nestjs/microservices/exceptions/rpc-exception';
 import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Injectable()
-export class StatusService {
+export class AttributeService {
   constructor(private readonly db: DatabaseService) { }
 
+  //---------------------------------------------------------------
+  // PUBLIC METHODS
+  //---------------------------------------------------------------
+
   findAll() {
-    return this.db.status.findMany();
+    return this.db.attribute.findMany();
   }
 
   //---------------------------------------------------------------
@@ -34,8 +38,8 @@ export class StatusService {
     }
 
     //Query
-    const totalResults = await this.db.status.count({ where });
-    const statuses = await this.db.status.findMany({
+    const totalResults = await this.db.attribute.count({ where });
+    const attributes = await this.db.attribute.findMany({
       where,
       skip: (page - 1) * per_page,
       take: per_page,
@@ -60,36 +64,43 @@ export class StatusService {
         has_next: hasNext,
         has_previous: hasPrevious,
       },
-      data: statuses,
+      data: attributes,
     };
   }
 
+  // Admin - Get one
   async adminFindOne(id: string) {
-    const status = await this.db.status.findUnique({ where: { id } });
-    if (!status) {
+    const attribute = await this.db.attribute.findUnique({ where: { id } });
+    if (!attribute) {
       throw new RpcException({
         status: 404,
-        message: `Status ID ${id} not found`,
+        message: `Attribute ID ${id} not found`,
       });
     }
-    return status;
+    return attribute;
   }
 
-  adminCreate(createStatusDto: CreateStatusDto) {
-    return this.db.status.create({ data: createStatusDto });
+  // Admin - Create
+  adminCreate(createAttributeDto: CreateAttributeDto) {
+    return this.db.attribute.create({ data: createAttributeDto });
   }
 
-  async adminUpdate(id: string, updateStatusDto: UpdateStatusDto) {
+  // Admin - Update
+  async adminUpdate(id: string, updateAttributeDto: UpdateAttributeDto) {
     await this.adminFindOne(id);
-    return this.db.status.update({
-      where: { id },
-      data: updateStatusDto,
-    });
+    return this.db.attribute.update({ where: { id }, data: updateAttributeDto });
   }
 
+  // Admin - Delete
   async adminRemove(id: string) {
     await this.adminFindOne(id);
-    return this.db.status.delete({ where: { id } });
+    const attributes = await this.db.oil.findMany({ where: { attributeId: id } });
+    if (attributes.length > 0) {
+      throw new RpcException({
+        status: 409,
+        message: `Attribute ID ${id} has associated products`,
+      });
+    }
+    return this.db.attribute.delete({ where: { id } });
   }
-
 }

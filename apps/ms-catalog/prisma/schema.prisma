@@ -36,9 +36,9 @@ model Product {
   character   Character? @relation(fields: [characterId], references: [id])
 
   //Many-to-Many relations
-  image       Image[]
-  sport       Sport[]
-  tag         Tag[]
+  images       Image[]
+  sports       Sport[]
+  tags         Tag[]
 
   // Sub model with different attributes relation
   bag        Bag?
@@ -89,7 +89,9 @@ model Image {
   image_url  String
   alt_text   String
   order     Int
-  products  Product[]
+
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 model Sport {
   id    String   @id @default(uuid())
@@ -125,7 +127,7 @@ model Bag {
   top_open  Int
 
   productId String @unique
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   material  BagMaterial[]
 }
@@ -140,7 +142,7 @@ model Glove{
   open_size Int
 
   productId String @unique
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -155,7 +157,7 @@ model Airgear{
   number_holes Int
 
   productId String @unique
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 
 /////////////////////////////////////////////////////////////////////
@@ -168,7 +170,7 @@ model Oil{
   attribute   Attribute @relation(fields: [attributeId], references: [id])
 
   productId String @unique
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 }
 model Attribute {
   id   String @id @default(uuid())
@@ -196,7 +198,7 @@ model Trophy{
   scale             String
 
   productId String @unique
-  product   Product @relation(fields: [productId], references: [id])
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   material  TrophyMaterial[]
 }

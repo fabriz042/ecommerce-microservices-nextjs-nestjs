@@ -1,40 +1,47 @@
 import { Controller, ParseUUIDPipe } from '@nestjs/common';
-import { MessagePattern, Payload } from '@nestjs/microservices';
 import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { CreateCategoryDto, UpdateCategoryDto } from "@packages/shared-back";
+import { MessagePattern, Payload } from '@nestjs/microservices';
+import { FilterDto } from '@/common/dtos/filter.dtos';
 
 @Controller()
 export class CategoryController {
-  constructor(private readonly categoryService: CategoryService) {}
+  constructor(private readonly categoryService: CategoryService) { }
 
-  //Create
-  @MessagePattern('createCategory')
-  create(@Payload() createCategoryDto: CreateCategoryDto) {
-    return this.categoryService.create(createCategoryDto);
-  }
-
-  //Get all
+  //---------------------------------------------------------------
+  // PUBLIC METHODS
+  //---------------------------------------------------------------
   @MessagePattern('findAllCategory')
   findAll() {
     return this.categoryService.findAll();
   }
 
-  //Get one
-  @MessagePattern('findOneCategory')
-  findOne(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.categoryService.findOne(id);
+  //---------------------------------------------------------------
+  // ADMIN METHODS
+  //---------------------------------------------------------------
+  @MessagePattern('adminFindAllCategory')
+  adminFindAll(@Payload() filterDto: FilterDto) {
+    return this.categoryService.adminFindAll(filterDto);
   }
 
-  //Update
-  @MessagePattern('updateCategory')
-  update(@Payload() updateCategoryDto: UpdateCategoryDto) {
-    return this.categoryService.update(updateCategoryDto.id, updateCategoryDto);
+  @MessagePattern('adminFindOneCategory')
+  adminFindOne(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.categoryService.adminFindOne(id);
   }
 
-  //Delete
-  @MessagePattern('removeCategory')
-  remove(@Payload('id', ParseUUIDPipe) id: string) {
-    return this.categoryService.remove(id);
+  @MessagePattern('adminCreateCategory')
+  adminCreate(@Payload() createCategoryDto: CreateCategoryDto) {
+    return this.categoryService.adminCreate(createCategoryDto);
+  }
+
+  @MessagePattern('adminUpdateCategory')
+  adminUpdate(@Payload() payload: any) {
+    const { id, ...updateCategoryDto } = payload;
+    return this.categoryService.adminUpdate(id, updateCategoryDto);
+  }
+
+  @MessagePattern('adminRemoveCategory')
+  adminRemove(@Payload('id', ParseUUIDPipe) id: string) {
+    return this.categoryService.adminRemove(id);
   }
 }
