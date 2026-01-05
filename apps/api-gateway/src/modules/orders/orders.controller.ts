@@ -9,13 +9,13 @@ import {
   Patch,
 } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices/client/client-proxy';
-import { NATS_SERVICE } from 'src/config/services';
+import { NATS_SERVICE } from '@/config/services';
 import { CreateOrderDto } from './dto';
 import { StatusDto } from './dto/status.dto';
 
 @Controller('orders')
 export class OrdersController {
-  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) { }
 
   @Post()
   create(@Body() createOrderDto: CreateOrderDto) {

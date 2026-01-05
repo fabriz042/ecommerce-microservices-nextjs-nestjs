@@ -9,14 +9,13 @@ import { Socket } from 'socket.io';
 import { MessageDto } from './dtos/message.dto';
 import { Inject } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
-import { NATS_SERVICE } from 'src/config';
+import { NATS_SERVICE } from '@/config';
 
 @WebSocketGateway()
 export class ChatbotGateway
-  implements OnGatewayConnection, OnGatewayDisconnect
-{
+  implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() wss: Socket;
-  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) { }
 
   handleConnection(client: Socket) {
     console.log('Client connected:', client.id);

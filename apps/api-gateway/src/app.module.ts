@@ -12,6 +12,7 @@ import {
   CharacterModule,
   ChatbotModule,
   BlogModule,
+  AttributeModule,
 } from './modules';
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import {
       envFilePath: '.env',
     }),
     CategoryModule,
+    AttributeModule,
     OrdersModule,
     NatsModule,
     AuthModule,
@@ -32,4 +34,4 @@ import {
     BlogModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

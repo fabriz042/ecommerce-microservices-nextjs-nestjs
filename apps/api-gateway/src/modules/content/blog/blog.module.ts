@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AuthController } from './auth.controller';
+import { BlogController } from './blog.controller';
 import { NatsModule } from '@/transports/nats.module';
 
 @Module({
-  controllers: [AuthController],
+  controllers: [BlogController],
   imports: [NatsModule],
 })
-export class AuthModule { }
+export class BlogModule { }

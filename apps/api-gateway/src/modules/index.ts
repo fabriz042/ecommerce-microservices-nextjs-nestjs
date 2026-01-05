@@ -1,10 +1,13 @@
-export * from './products/products.module';
-export * from './category/category.module';
-export * from './orders/orders.module';
-export * from './brand/brand.module';
-export * from './status/status.module';
 export * from './auth/auth.module';
-export * from './series/series.module';
-export * from './character/character.module';
-export * from './blog/blog.module';
+
+export * from './catalog/product/products.module';
+export * from './catalog/attribute/attribute.module';
+export * from './catalog/category/category.module';
+export * from './catalog/brand/brand.module';
+export * from './catalog/status/status.module';
+export * from './catalog/series/series.module';
+export * from './catalog/character/character.module';
+
+export * from './orders/orders.module';
+export * from './content/blog/blog.module';
 export * from './chatbot/chatbot.module';

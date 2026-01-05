@@ -1,5 +1,5 @@
 import { Controller, Post, Inject, Body, Get, UseGuards } from '@nestjs/common';
-import { NATS_SERVICE } from 'src/config/services';
+import { NATS_SERVICE } from '@/config/services';
 import { ClientProxy } from '@nestjs/microservices';
 import { LoginUserDto, RegisterUserDto } from './dto';
 import { AuthGuard } from './guards/auth.guard';
@@ -8,7 +8,7 @@ import type { CurrentUser } from './interfaces/current-user.interface';
 
 @Controller('auth')
 export class AuthController {
-  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) {}
+  constructor(@Inject(NATS_SERVICE) private readonly client: ClientProxy) { }
 
   @Post('register')
   registerUser(@Body() registerUserDto: RegisterUserDto) {
