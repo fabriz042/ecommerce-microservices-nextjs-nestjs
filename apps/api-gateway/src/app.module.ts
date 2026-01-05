@@ -13,6 +13,8 @@ import {
   ChatbotModule,
   BlogModule,
   AttributeModule,
+  SportsModule,
+  TagsModule,
 } from './modules';
 @Module({
   imports: [
@@ -24,6 +26,8 @@ import {
     CategoryModule,
     AttributeModule,
     OrdersModule,
+    SportsModule,
+    TagsModule,
     NatsModule,
     AuthModule,
     BrandModule,

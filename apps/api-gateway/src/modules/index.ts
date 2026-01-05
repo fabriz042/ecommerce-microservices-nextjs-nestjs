@@ -7,6 +7,8 @@ export * from './catalog/brand/brand.module';
 export * from './catalog/status/status.module';
 export * from './catalog/series/series.module';
 export * from './catalog/character/character.module';
+export * from './catalog/sports/sports.module';
+export * from './catalog/tags/tags.module';
 
 export * from './orders/orders.module';
 export * from './content/blog/blog.module';
