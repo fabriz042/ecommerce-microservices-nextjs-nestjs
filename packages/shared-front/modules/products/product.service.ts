@@ -1,4 +1,5 @@
 import api from "../api.service";
+import { ProductAdmin } from "./product.interface";
 
 interface ProductSearchParams {
   search: string;
@@ -80,10 +81,30 @@ export const getSearchResultsAdmin = async ({
   }
 };
 
+export const getProductByIdAdmin = async (id: string) => {
+  try {
+    const response = await api.get(`admin/products/${id}/`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching product by ID", error);
+    throw error;
+  }
+};
+
+export const updateProduct = async (id: string, productData: any) => {
+  try {
+    const response = await api.patch(`admin/products/${id}/`, productData);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating product", error);
+    throw error;
+  }
+};
+
 export const createProduct = async (productData: any) => {
   try {
     const response = await api.post("admin/products/", productData);
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error adding product:", error);
     throw error;
@@ -93,7 +114,7 @@ export const createProduct = async (productData: any) => {
 export const deleteProduct = async (id: string) => {
   try {
     const response = await api.delete(`admin/products/${id}`);
-    return response;
+    return response.data;
   } catch (error) {
     console.error("Error deleting product:", error);
     throw error;

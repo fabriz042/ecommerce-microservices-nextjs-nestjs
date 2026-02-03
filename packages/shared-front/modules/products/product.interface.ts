@@ -22,10 +22,10 @@ export interface PaginatedProducts {
 }
 
 //Interfaces for detailed product information
-import { Tag } from "../../types/tag";
-import { Sport } from "../../types/sport";
-import { Brand } from "../brand/brand.interface";
-import { Category } from "../category/category.interface";
+import { Tag } from "@/modules/tags/tag";
+import { Sport } from "@/modules/sports/sport";
+import { Brand } from "@/modules/brand/brand.interface";
+import { Category } from "@/modules/category/category.interface";
 
 export interface ProductDetail {
   id: string;
